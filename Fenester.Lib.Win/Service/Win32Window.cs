@@ -1,4 +1,4 @@
-﻿using Fenester.Lib.Core.Domain.Os;
+﻿using Fenester.Lib.Core.Domain.Graphical;
 using Fenester.Lib.Core.Enums;
 using Fenester.Lib.Win.Domain.Os;
 using Fenester.Lib.Win.Service.Helpers;
@@ -10,15 +10,73 @@ using System.Text;
 
 namespace Fenester.Lib.Win.Service
 {
-    public class Win32Window
+    public static class Win32Window
     {
-        private static void AddWindow(Dictionary<IntPtr, IInternalWindow> windows, IntPtr handle, IntPtr shellWindow)
+        public static bool GetWindowProps(Window window)
         {
-            var isVisible = Win32.IsWindowVisible(handle);
-            if (!isVisible)
+            try
             {
-                return;
+                var handle = window.Handle;
+
+                window.Title = GetWindowTitle(handle);
+
+                window.Class = GetClassName(handle);
+
+                Rect? windowRect = null;
+
+                if (Win32.GetWindowRect(handle, out Rect rect))
+                {
+                    windowRect = rect;
+                }
+
+                if (Win32.GetWindowPlacement(handle, out WindowPlacement windowPlacement))
+                {
+                    switch (windowPlacement.showCmd)
+                    {
+                        case SW.SHOWMINIMIZED:
+                            window.OsVisibility = Visibility.Minimized;
+                            window.RectangleCurrent = null;
+                            window.Rectangle = Win32Helper.GetRectangleFromRect(windowPlacement.rcNormalPosition);
+                            break;
+
+                        case SW.SHOWMAXIMIZED:
+                            window.OsVisibility = Visibility.Maximised;
+                            if (windowRect.HasValue)
+                            {
+                                window.RectangleCurrent = Win32Helper.GetRectangleFromRect(windowRect.Value);
+                            }
+                            window.Rectangle = Win32Helper.GetRectangleFromRect(windowPlacement.rcNormalPosition);
+                            break;
+
+                        default:
+                            var isVisible = Win32.IsWindowVisible(handle);
+                            if (isVisible)
+                            {
+                                window.OsVisibility = Visibility.Normal;
+                                if (windowRect.HasValue)
+                                {
+                                    window.RectangleCurrent = Win32Helper.GetRectangleFromRect(windowRect.Value);
+                                }
+                                window.Rectangle = Win32Helper.GetRectangleFromRect(windowPlacement.rcNormalPosition);
+                            }
+                            else
+                            {
+                                window.OsVisibility = Visibility.None;
+                                window.Rectangle = null;
+                            }
+                            break;
+                    }
+                }
+                return true;
             }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static void AddWindow(Dictionary<IntPtr, Window> windows, IntPtr handle, IntPtr shellWindow)
+        {
             var window = new Window(handle);
 
             if (handle == shellWindow)
@@ -30,86 +88,44 @@ namespace Fenester.Lib.Win.Service
                 window.Category = WindowCategory.Normal;
             }
 
-            window.Title = GetWindowTitle(handle);
+            GetWindowProps(window);
 
-            window.Class = GetClassName(handle);
+            //if (window.OsVisibility == Visibility.None)
+            //{
+            //    return;
+            //}
 
-            Rect? windowRect = null;
-
-            if (Win32.GetWindowRect(handle, out Rect rect))
-            {
-                windowRect = rect;
-            }
-
-            if (Win32.GetWindowPlacement(handle, out WindowPlacement windowPlacement))
-            {
-                switch (windowPlacement.showCmd)
-                {
-                    case Win32.SW_SHOWMINIMIZED:
-                        window.OsVisibility = Visibility.Minimized;
-                        window.RectangleCurrent = null;
-                        window.Rectangle = Win32Helper.GetRectangleFromRect(windowPlacement.rcNormalPosition);
-                        break;
-
-                    case Win32.SW_SHOWMAXIMIZED:
-                        window.OsVisibility = Visibility.Maximised;
-                        if (windowRect.HasValue)
-                        {
-                            window.RectangleCurrent = Win32Helper.GetRectangleFromRect(windowRect.Value);
-                        }
-                        window.Rectangle = Win32Helper.GetRectangleFromRect(windowPlacement.rcNormalPosition);
-                        break;
-
-                    default:
-                        if (isVisible)
-                        {
-                            window.OsVisibility = Visibility.Normal;
-                            if (windowRect.HasValue)
-                            {
-                                window.RectangleCurrent = Win32Helper.GetRectangleFromRect(windowRect.Value);
-                            }
-                            window.Rectangle = Win32Helper.GetRectangleFromRect(windowPlacement.rcNormalPosition);
-                        }
-                        else
-                        {
-                            window.OsVisibility = Visibility.None;
-                            window.Rectangle = null;
-                        }
-                        break;
-                }
-            }
-
-            if
-                (
-                    (window.Rectangle == null)
-                    ||
-                    (
-                        (window.Rectangle != null)
-                        &&
-                        (
-                            (window.Rectangle.Size.Width == 0)
-                            ||
-                            (window.Rectangle.Size.Height == 0)
-                        )
-                    )
-                )
-            {
-                return;
-            }
+            //if
+            //    (
+            //        (window.Rectangle == null)
+            //        ||
+            //        (
+            //            (window.Rectangle != null)
+            //            &&
+            //            (
+            //                (window.Rectangle.Size.Width == 0)
+            //                ||
+            //                (window.Rectangle.Size.Height == 0)
+            //            )
+            //        )
+            //    )
+            //{
+            //    return;
+            //}
 
             windows[handle] = window;
         }
 
         /// <summary>Returns a dictionary that contains the handle and title of all the open windows.</summary>
         /// <returns>A dictionary that contains the handle and title of all the open windows.</returns>
-        public static IDictionary<IntPtr, IInternalWindow> GetOpenWindows()
+        public static IDictionary<IntPtr, Window> GetOpenWindows()
         {
             IntPtr shellWindow = Win32.GetShellWindow();
             IntPtr desktopWindow = Win32.GetDesktopWindow();
-            Dictionary<IntPtr, IInternalWindow> windows = new Dictionary<IntPtr, IInternalWindow>();
+            Dictionary<IntPtr, Window> windows = new Dictionary<IntPtr, Window>();
 
-            // AddWindow(windows, desktopWindow, shellWindow);
-            // AddWindow(windows, shellWindow, IntPtr.Zero);
+            AddWindow(windows, desktopWindow, shellWindow);
+            AddWindow(windows, shellWindow, IntPtr.Zero);
 
             Win32.EnumWindows((IntPtr handle, int lParam) =>
             {
@@ -124,11 +140,7 @@ namespace Fenester.Lib.Win.Service
         {
             List<IntPtr> windows = new List<IntPtr>();
 
-            Win32.EnumWindows(delegate (IntPtr handle, int lParam)
-            {
-                windows.Add(handle);
-                return true;
-            }, 0);
+            Win32.EnumWindows((IntPtr handle, int lParam) => { windows.Add(handle); return true; }, 0);
 
             return windows;
         }
@@ -220,36 +232,50 @@ namespace Fenester.Lib.Win.Service
             throw new InvalidCastException("GCHandle Target could not be cast as List<IntPtr>");
         }
 
-        public static bool GetWindowStyles(IntPtr handle, out uint styles, out uint extStyles)
+        public static bool GetWindowStyles(IntPtr handle, out WS styles, out WS_EX extStyles)
         {
             try
             {
-                styles = unchecked((uint)Win32.GetWindowLong(handle, Win32.GWL_STYLE).ToInt32());
-                extStyles = unchecked((uint)Win32.GetWindowLong(handle, Win32.GWL_EXSTYLE).ToInt32());
+                styles = Win32.GetWindowLong(handle, GWL.STYLE).ToWS();
+                extStyles = Win32.GetWindowLong(handle, GWL.EXSTYLE).ToWS_EX();
                 return true;
             }
             catch
             {
-                styles = 0;
-                extStyles = 0;
+                styles = WS.NONE;
+                extStyles = WS_EX.NONE;
                 return false;
             }
         }
 
-        public static bool SetWindowStyles(IntPtr handle, uint stylesToAdd, uint stylesToRemove, uint extStylesToAdd, uint extStyleToRemove)
+        public static bool SetWindowStyles(IntPtr handle, WS styles, WS_EX extStyles)
         {
             try
             {
-                var styles = unchecked((uint)Win32.GetWindowLong(handle, Win32.GWL_STYLE).ToInt32());
-                var extStyles = unchecked((uint)Win32.GetWindowLong(handle, Win32.GWL_EXSTYLE).ToInt32());
+                Win32.SetWindowLong(handle, GWL.STYLE, new IntPtr((uint)styles));
+                Win32.SetWindowLong(handle, GWL.EXSTYLE, new IntPtr((uint)extStyles));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool ChangeWindowStyles(IntPtr handle, WS stylesToAdd, WS stylesToRemove, WS_EX extStylesToAdd, WS_EX extStyleToRemove)
+        {
+            try
+            {
+                var styles = Win32.GetWindowLong(handle, GWL.STYLE).ToWS();
+                var extStyles = Win32.GetWindowLong(handle, GWL.EXSTYLE).ToWS_EX();
 
                 styles |= stylesToAdd;
                 styles &= ~stylesToRemove;
                 extStyles |= extStylesToAdd;
                 extStyles &= ~extStyleToRemove;
 
-                Win32.SetWindowLong(handle, Win32.GWL_STYLE, new IntPtr(styles));
-                Win32.SetWindowLong(handle, Win32.GWL_EXSTYLE, new IntPtr(extStyles));
+                Win32.SetWindowLong(handle, GWL.STYLE, new IntPtr((uint)styles));
+                Win32.SetWindowLong(handle, GWL.EXSTYLE, new IntPtr((uint)extStyles));
                 return true;
             }
             catch
@@ -257,5 +283,44 @@ namespace Fenester.Lib.Win.Service
                 return false;
             }
         }
+
+        public static bool FocusWindow(IntPtr handle)
+        {
+            var style = Win32.GetWindowLong(handle, GWL.STYLE).ToWS();
+
+            // Minimize and restore to be able to make it active.
+            if ((style & WS.MINIMIZE) == WS.MINIMIZE)
+            {
+                Win32.ShowWindow(handle, SW.RESTORE);
+            }
+
+            uint currentlyFocusedWindowProcessId = Win32.GetWindowThreadProcessId(Win32.GetForegroundWindow(), IntPtr.Zero);
+            uint appThread = Win32.GetCurrentThreadId();
+
+            if (currentlyFocusedWindowProcessId != appThread)
+            {
+                Win32.AttachThreadInput(currentlyFocusedWindowProcessId, appThread, true);
+                Win32.BringWindowToTop(handle);
+                Win32.ShowWindow(handle, SW.SHOW);
+                Win32.AttachThreadInput(currentlyFocusedWindowProcessId, appThread, false);
+            }
+            else
+            {
+                Win32.BringWindowToTop(handle);
+                Win32.ShowWindow(handle, SW.SHOW);
+            }
+
+            return true;
+        }
+
+        public static void MoveWindowAndRedraw(IntPtr handle, IRectangle rectangle)
+        {
+            Win32.MoveWindow(handle, rectangle.Position.Left, rectangle.Position.Top, rectangle.Size.Width, rectangle.Size.Height, true);
+            Win32.DrawMenuBar(handle);
+        }
+
+        private static WS ToWS(this IntPtr self) => (WS)unchecked((uint)self.ToInt32());
+
+        private static WS_EX ToWS_EX(this IntPtr self) => (WS_EX)unchecked((uint)self.ToInt32());
     }
 }

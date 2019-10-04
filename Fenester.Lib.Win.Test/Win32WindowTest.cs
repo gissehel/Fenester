@@ -12,11 +12,6 @@ namespace Fenester.Lib.Win.Test
     [TestClass]
     public class Win32WindowTest
     {
-        private class IntPtrComparer : IComparer<IntPtr>
-        {
-            public int Compare(IntPtr x, IntPtr y) => x.ToInt64().CompareTo(y.ToInt64());
-        }
-
         [TestMethod]
         public void CompareGetHandles()
         {
@@ -71,8 +66,7 @@ namespace Fenester.Lib.Win.Test
             ;
         }
 
-        [TestMethod]
-        public void ChangeWindowTest()
+        private void ChangeWindow(string traceName, Action<IntPtr> change, Action<IntPtr, IWindow> afterChange)
         {
             var windowsByHandle = Win32Window.GetOpenWindows();
 
@@ -83,106 +77,97 @@ namespace Fenester.Lib.Win.Test
             ;
 
             TraceFile
-                .Get("Windows_to_change")
+                .Get(traceName)
                 .Each(
                     windows,
                     (trace, window) =>
                     {
                         var handle = (window.Id as WindowId).Handle;
                         {
-                            if (Win32Window.GetWindowStyles(handle, out uint styles, out uint extStyles))
+                            if (Win32Window.GetWindowStyles(handle, out WS styles, out WS_EX extStyles))
                             {
                                 trace.Out
                                     (
-                                        "{0}:[{1}] ({2}) [{3}] : {4} - {5}",
+                                        "{0}:[{1}] ({2}) [{3}] : {4} - {5} - {6}",
                                         window.Canonical,
                                         window.Title,
                                         window.Class,
                                         window.OsVisibility,
                                         styles,
-                                        extStyles
+                                        extStyles,
+                                        GetStyles(styles, extStyles)
                                    );
                             }
                         }
-                        Win32Window.SetWindowStyles(handle, 0, Win32.WS_THICKFRAME | Win32.WS_BORDER, 0, 0);
+                        change(handle);
                         {
-                            if (Win32Window.GetWindowStyles(handle, out uint styles, out uint extStyles))
+                            if (Win32Window.GetWindowStyles(handle, out WS styles, out WS_EX extStyles))
                             {
                                 trace.Out
                                     (
-                                        "{0}:[{1}] ({2}) [{3}] : {4} - {5}",
+                                        "{0}:[{1}] ({2}) [{3}] : {4} - {5} - {6}",
                                         window.Canonical,
                                         window.Title,
                                         window.Class,
                                         window.OsVisibility,
                                         styles,
-                                        extStyles
+                                        extStyles,
+                                        GetStyles(styles, extStyles)
                                    );
                             }
                         }
-
-                        Win32.MoveWindow(handle, (1920 * 4) / 3, 0, 1920 / 3, 1080, true);
+                        afterChange(handle, window);
                     }
                 )
                 .Close()
             ;
+        }
+
+        [TestMethod]
+        public void ChangeWindowTest()
+        {
+            ChangeWindow
+            (
+                "Windows_to_change",
+                (handle) =>
+                {
+                    Win32Window.ChangeWindowStyles(handle, 0, WS.MINIMIZEBOX | WS.MAXIMIZEBOX | WS.THICKFRAME, 0, 0);
+                },
+                (handle, window) =>
+                {
+                    Win32Window.MoveWindowAndRedraw(handle, window.RectangleCurrent);
+                    Win32Window.FocusWindow(handle);
+                }
+            );
         }
 
         [TestMethod]
         public void ChangeWindowBackTest()
         {
-            var windowsByHandle = Win32Window.GetOpenWindows();
-
-            var windows = windowsByHandle
-                .Values.OrderBy(window => (window.Id as WindowId).Handle.ToInt64())
-                .Select(window => window as IWindow)
-                .Where(window => window.Class == "TTOTAL_CMD")
-            ;
-
-            TraceFile
-                .Get("Windows_to_change_back")
-                .Each(
-                    windows,
-                    (trace, window) =>
-                    {
-                        var handle = (window.Id as WindowId).Handle;
-                        {
-                            if (Win32Window.GetWindowStyles(handle, out uint styles, out uint extStyles))
-                            {
-                                trace.Out
-                                    (
-                                        "{0}:[{1}] ({2}) [{3}] : {4} - {5}",
-                                        window.Canonical,
-                                        window.Title,
-                                        window.Class,
-                                        window.OsVisibility,
-                                        styles,
-                                        extStyles
-                                   );
-                            }
-                        }
-                        Win32Window.SetWindowStyles(handle, Win32.WS_THICKFRAME | Win32.WS_BORDER, 0, 0, 0);
-                        {
-                            if (Win32Window.GetWindowStyles(handle, out uint styles, out uint extStyles))
-                            {
-                                trace.Out
-                                    (
-                                        "{0}:[{1}] ({2}) [{3}] : {4} - {5}",
-                                        window.Canonical,
-                                        window.Title,
-                                        window.Class,
-                                        window.OsVisibility,
-                                        styles,
-                                        extStyles
-                                   );
-                            }
-                        }
-
-                        Win32.MoveWindow(handle, 1920 + 300, 200, 1100, 800, true);
-                    }
-                )
-                .Close()
-            ;
+            ChangeWindow
+            (
+                "Windows_to_change_back",
+                (handle) =>
+                {
+                    // Win32Window.SetWindowStyles(handle, WS.BORDER, WS.POPUPWINDOW, 0, 0);
+                    // Win32Window.SetWindowStyles(handle, 0, 0, 0, WS_EX.TOOLWINDOW);
+                    Win32.SetWindowLong(handle, GWL.STYLE, new IntPtr(382664704));
+                    Win32.SetWindowLong(handle, GWL.EXSTYLE, new IntPtr(327936));
+                },
+                (handle, window) =>
+                {
+                    Win32Window.MoveWindowAndRedraw(handle, window.RectangleCurrent);
+                    Win32Window.FocusWindow(handle);
+                }
+            );
         }
+
+        private string GetStyles(WS style, WS_EX exStyle)
+            => string.Format
+            (
+                "[{0}] [{1}]",
+                string.Join("|", Flags.FlagAnalyserWS.GetNames(style)),
+                string.Join("|", Flags.FlagAnalyserWSEX.GetNames(exStyle))
+            );
     }
 }

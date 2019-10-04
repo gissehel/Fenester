@@ -1,13 +1,25 @@
 ﻿using Fenester.Lib.Core.Domain.Graphical;
 using Fenester.Lib.Core.Domain.Os;
 using Fenester.Lib.Core.Enums;
+using Fenester.Lib.Win.Service.Helpers;
 using System;
 
 namespace Fenester.Lib.Win.Domain.Os
 {
+    public class InitialWindowProps
+    {
+        public IRectangle RectangleCurrent { get; set; }
+
+        public WS WinStyles { get; set; }
+
+        public WS_EX WinExStyles { get; set; }
+    }
+
     public class Window : IInternalWindow
     {
         public WindowId Id { get; }
+
+        public IntPtr Handle => Id.Handle;
 
         public Window(IWindowId id)
         {
@@ -33,12 +45,14 @@ namespace Fenester.Lib.Win.Domain.Os
 
         public WindowCategory Category { get; set; }
 
+        public InitialWindowProps InitialWindowProps { get; set; }
+
         public void UpdateFrom(IWindow window)
         {
             Title = window.Title;
             Class = window.Class;
-            Rectangle = window.Rectangle.Clone();
-            RectangleCurrent = window.RectangleCurrent.Clone();
+            Rectangle = window.Rectangle?.Clone();
+            RectangleCurrent = window.RectangleCurrent?.Clone();
             OsVisibility = window.OsVisibility;
             Category = window.Category;
         }
@@ -50,8 +64,8 @@ namespace Fenester.Lib.Win.Domain.Os
         public IInternalWindow Clone() => new Window(Id)
         {
             Category = Category,
-            Rectangle = Rectangle.Clone(),
-            RectangleCurrent = RectangleCurrent.Clone(),
+            Rectangle = Rectangle?.Clone(),
+            RectangleCurrent = RectangleCurrent?.Clone(),
             OsVisibility = OsVisibility,
             Title = Title,
             Class = Class

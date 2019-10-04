@@ -9,12 +9,16 @@ namespace Fenester.Lib.Core.Service
     {
         Task<IEnumerable<IWindow>> GetWindows();
 
-        Task<IRectangle> Move(IWindow window, IRectangle rectangle);
+        Task<IWindow> UpdateCurrentPosition(IWindow iWindow);
 
-        Task<IRectangle> GetWindowCurrentPosition(IWindow window);
+        Task<IWindow> Show(IWindow iWindow);
 
-        Task<IWindow> Show(IWindow window);
+        Task<IWindow> Hide(IWindow iWindow);
 
-        Task<IWindow> Hide(IWindow hide);
+        Task<IWindow> Move(IWindow iWindow, IRectangle rectangle);
+
+        Task<IWindow> FocusWindow(IWindow iWindow);
+
+        Task<IWindow> Unmanage(IWindow iWindow);
     }
 }

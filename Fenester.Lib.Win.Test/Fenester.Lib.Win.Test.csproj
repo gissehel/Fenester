@@ -29,6 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +38,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -49,10 +51,14 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FlagAnalyser.cs" />
+    <Compile Include="Flags.cs" />
+    <Compile Include="IntPtrComparer.cs" />
     <Compile Include="TraceFile.cs" />
     <Compile Include="Win32MonitorTest.cs" />
     <Compile Include="Win32WindowTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WindowOsServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -66,6 +72,13 @@
       <Project>{ab455a7b-34e3-49b2-b945-f522d94fdebe}</Project>
       <Name>Fenester.Lib.Win</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Fenester.Lib\Fenester.Lib.Graphical.csproj">
+      <Project>{EC15D6E9-524E-4CEF-9175-8A2FA0B5108D}</Project>
+      <Name>Fenester.Lib.Graphical</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

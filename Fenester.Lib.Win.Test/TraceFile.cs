@@ -21,13 +21,14 @@ namespace Fenester.Lib.Win.Test
                 else
                 {
                     string filename = null;
+                    const string datePattern = "yyyyMMdd-HHmmss";
                     if (Name != null)
                     {
-                        filename = string.Format("Out-{0}-{1}.log", DateTime.Now.ToString("yyyyddMM-HHmmss"), Name);
+                        filename = string.Format("Out-{0}-{1}.log", DateTime.Now.ToString(datePattern), Name);
                     }
                     else
                     {
-                        filename = string.Format("Out-{0}.log", DateTime.Now.ToString("yyyyddMM-HHmmss"));
+                        filename = string.Format("Out-{0}.log", DateTime.Now.ToString(datePattern));
                     }
                     TextWriter = new StreamWriter(filename);
                     Opened = true;
@@ -83,9 +84,15 @@ namespace Fenester.Lib.Win.Test
         {
             if (Opened)
             {
-                TextWriter.Close();
-                TextWriter = null;
                 Opened = false;
+                try
+                {
+                    TextWriter.Close();
+                }
+                catch
+                {
+                }
+                TextWriter = null;
             }
         }
 

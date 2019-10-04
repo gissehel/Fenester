@@ -17,11 +17,11 @@ namespace Fenester.Lib.Win.Domain.Os
 
         public string Id { get; set; }
 
-        public void UpdateFrom(IScreen window)
+        public void UpdateFrom(IScreen screen)
         {
-            Index = window.Index;
-            Name = window.Name;
-            Rectangle = window.Rectangle.Clone();
+            Index = screen.Index;
+            Name = screen.Name;
+            Rectangle = screen.Rectangle.Clone();
         }
     }
 }

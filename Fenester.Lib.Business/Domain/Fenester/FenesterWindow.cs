@@ -10,10 +10,9 @@ namespace Fenester.Lib.Business.Domain.Fenester
         public FenesterWindow(IWindow window)
         {
             Window = window;
-            Id = window.Id;
         }
 
-        public IWindowId Id { get; }
+        public IWindowId Id => Window.Id;
 
         public IWindow Window { get; set; }
 
