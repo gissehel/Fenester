@@ -53,7 +53,9 @@ namespace Fenester.Lib.Test.Tools.Win
 
         protected virtual IEnumerable<ITracable> Tracables => new List<ITracable> { };
 
-        protected virtual IEnumerable<Expression<Func<IInitializable>>> GetInitializaleExpressions => new List<Expression<Func<IInitializable>>>();
+        protected class InitializableExpressions : List<Expression<Func<IInitializable>>> { }
+
+        protected virtual InitializableExpressions GetInitializableExpressions => new InitializableExpressions();
 
         private PropertyInfo GetProperty(string propertyName)
         {
@@ -79,7 +81,7 @@ namespace Fenester.Lib.Test.Tools.Win
 
         protected void InitServices()
         {
-            var initializables = GetInitializaleExpressions
+            var initializables = GetInitializableExpressions
                 .Select(x => x.GetPropertyName())
                 .Select(x => GetInitializableGetter(x)())
                 .Where(x => x != null)
@@ -92,7 +94,7 @@ namespace Fenester.Lib.Test.Tools.Win
 
         protected void UninitServices()
         {
-            var initializablePropertyNames = GetInitializaleExpressions
+            var initializablePropertyNames = GetInitializableExpressions
                 .Select(x => x.GetPropertyName())
                 .Reverse();
 
@@ -161,7 +163,10 @@ namespace Fenester.Lib.Test.Tools.Win
         protected override IEnumerable<ITracable> Tracables
             => new List<ITracable> { ServiceImpl };
 
-        protected override IEnumerable<Expression<Func<IInitializable>>> GetInitializaleExpressions
-            => new List<Expression<Func<IInitializable>>>() { () => ServiceImpl, };
+        protected override InitializableExpressions GetInitializableExpressions
+            => new InitializableExpressions()
+            {
+                () => ServiceImpl,
+            };
     }
 }

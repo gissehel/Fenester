@@ -54,6 +54,8 @@
     <Compile Include="Helpers\FlagAnalyser.cs" />
     <Compile Include="Helpers\FlagsExtension.cs" />
     <Compile Include="Helpers\IntPtrComparer.cs" />
+    <Compile Include="KeyServiceHookTest.cs" />
+    <Compile Include="KeyServiceRawInputTest.cs" />
     <Compile Include="KeyServiceTest.cs" />
     <Compile Include="ScreenOsServiceTest.cs" />
     <Compile Include="Win32MonitorTest.cs" />

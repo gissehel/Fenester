@@ -13,23 +13,10 @@ using System.Linq;
 namespace Fenester.Lib.Win.Test
 {
     [TestClass]
-    public class KeyServiceTest : DebuggableTest<KeyService, IKeyService>
+    public class KeyServiceRawInputTest : DebuggableTest<KeyServiceRawInput, IKeyService>
     {
-        private RunService RunServiceImpl { get; set; }
-        private IRunService RunService => RunServiceImpl;
-
-        protected override void CreateServices()
-        {
-            RunServiceImpl = new RunService();
-            ServiceImpl = new KeyService(RunServiceImpl);
-        }
-
-        protected override InitializableExpressions GetInitializableExpressions
-            => new InitializableExpressions
-            {
-                () => RunServiceImpl,
-                () => ServiceImpl,
-            };
+        public RunService RunServiceImpl { get; set; }
+        public IRunService RunService => RunServiceImpl;
 
         protected override void InitTraces()
         {
@@ -41,14 +28,36 @@ namespace Fenester.Lib.Win.Test
             Win32Window.Tracable = null;
         }
 
-        protected override IEnumerable<ITracable> Tracables => new List<ITracable> { RunServiceImpl, ServiceImpl };
+        protected override void CreateServices()
+        {
+            RunServiceImpl = new RunService();
+            ServiceImpl = new KeyServiceRawInput();
+        }
+
+        protected override InitializableExpressions GetInitializableExpressions
+            => new InitializableExpressions
+            {
+                () => RunServiceImpl,
+                () => ServiceImpl,
+            };
+
+        protected override IEnumerable<ITracable> Tracables => new List<ITracable>
+        {
+            RunServiceImpl,
+            ServiceImpl
+        };
 
         public IKey GetTestKey(string name) => Service.GetKeys().Where(k => k.Name == name).FirstOrDefault();
 
         [TestMethod]
         public void RegisterShortcutTest()
         {
-            TraceFile.SetName("RegisterShortcutTest");
+            TraceFile.SetName("RegisterShortcutTest-RawInput");
+            RunServiceImpl.AddFuncMessageProcessor((message) =>
+            {
+                this.LogLine("  Message : {0} - {1} - {2} - {3}", message.handle.ToRepr(), message.message.ToRepr(), message.wParam.ToString(), message.lParam.ToString());
+                return IntPtr.Zero;
+            });
             int count = 0;
             var shortcut = Service.GetShortcut(GetTestKey("N"), KeyModifier.Alt);
             var operation = new Operation("Test", () =>
@@ -60,28 +69,10 @@ namespace Fenester.Lib.Win.Test
             var registeredShortcut = Service.RegisterShortcut(shortcut, operation);
             this.LogLine("Stop main call");
 
+            Win32.PostMessage(IntPtr.Zero, WM.USER + 2, 0, 0);
+            Win32.PostMessage(IntPtr.Zero, WM.USER + 5, 0, 0);
+            Win32.PostMessage(IntPtr.Zero, WM.USER + 7, 0, 0);
             RunService.RunFor(new TimeSpan(0, 0, 10));
-            Assert.AreEqual(1, count);
-        }
-
-        [TestMethod]
-        public void RegisterShortcutTestNoTimeout()
-        {
-            TraceFile.SetName("RegisterShortcutTest");
-            int count = 0;
-            var shortcutN = Service.GetShortcut(GetTestKey("N"), KeyModifier.Alt);
-            var shortcutS = Service.GetShortcut(GetTestKey("S"), KeyModifier.Alt);
-            var operation = new Operation("Test", () =>
-            {
-                this.LogLine(string.Format("  Shortcut called"));
-                count++;
-            });
-            this.LogLine("Start main call");
-            var registeredShortcutN = Service.RegisterShortcut(shortcutN, operation);
-            var registeredShortcutS = Service.RegisterShortcut(shortcutS, new Operation("Quit", () => { RunService.Stop(); }));
-            this.LogLine("Stop main call");
-
-            RunService.Run();
             Assert.AreEqual(1, count);
         }
     }

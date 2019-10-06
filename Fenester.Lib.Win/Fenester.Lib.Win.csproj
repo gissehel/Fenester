@@ -53,6 +53,13 @@
     <Compile Include="Service\Helpers\Enums\Error.cs" />
     <Compile Include="Service\Helpers\Enums\CS.cs" />
     <Compile Include="Service\Helpers\delegates.cs" />
+    <Compile Include="Service\Helpers\Enums\HIDUsage.cs" />
+    <Compile Include="Service\Helpers\Enums\HIDUsagePage.cs" />
+    <Compile Include="Service\Helpers\Enums\RawInputCommand.cs" />
+    <Compile Include="Service\Helpers\Enums\RawInputType.cs" />
+    <Compile Include="Service\Helpers\Enums\RawKeyboardFlags.cs" />
+    <Compile Include="Service\Helpers\Enums\RIDEV.cs" />
+    <Compile Include="Service\Helpers\Enums\WH.cs" />
     <Compile Include="Service\Helpers\Structs\DisplayInfo.cs" />
     <Compile Include="Service\Helpers\Enums\GWL.cs" />
     <Compile Include="Service\Helpers\Enums\KeyModifiers.cs" />
@@ -63,6 +70,10 @@
     <Compile Include="Service\Helpers\Structs\Point.cs" />
     <Compile Include="Service\Helpers\Enums\QS.cs" />
     <Compile Include="Service\Helpers\Enums\RDW.cs" />
+    <Compile Include="Service\Helpers\Structs\RawInput.cs" />
+    <Compile Include="Service\Helpers\Structs\RawInputDevice.cs" />
+    <Compile Include="Service\Helpers\Structs\RawInputHeader.cs" />
+    <Compile Include="Service\Helpers\Structs\RawKeyboard.cs" />
     <Compile Include="Service\Helpers\Structs\Rect.cs" />
     <Compile Include="Service\Helpers\Enums\SC.cs" />
     <Compile Include="Service\Helpers\Enums\SW.cs" />
@@ -76,8 +87,11 @@
     <Compile Include="Service\Helpers\Structs\WindowPlacement.cs" />
     <Compile Include="Service\Helpers\Enums\WS.cs" />
     <Compile Include="Service\IMessageProcessor.cs" />
+    <Compile Include="Service\IRunServiceWin.cs" />
     <Compile Include="Service\KeyService.cs" />
     <Compile Include="Service\Helpers\Structs\Message.cs" />
+    <Compile Include="Service\KeyServiceHook.cs" />
+    <Compile Include="Service\KeyServiceRawInput.cs" />
     <Compile Include="Service\RunService.cs" />
     <Compile Include="Service\Helpers\Win32Monitor.cs" />
     <Compile Include="Service\Helpers\Win32Window.cs" />

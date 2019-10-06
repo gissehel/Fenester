@@ -363,14 +363,14 @@ namespace Fenester.Lib.Win.Service.Helpers
                 handleIconSm = IntPtr.Zero,
             };
 
-            Console.WriteLine("windowClassEx {0}", windowClassEx.ToString());
+            Tracable.LogLine("windowClassEx {0}", windowClassEx.ToString());
 
             var registeredClassEx = Win32.RegisterClassEx(ref windowClassEx);
-            Console.WriteLine("registeredClassEx {0}", registeredClassEx.ToString());
+            Tracable.LogLine("registeredClassEx {0}", registeredClassEx.ToString());
             if (registeredClassEx == 0)
             {
-                var error = Marshal.GetLastWin32Error();
-                Console.WriteLine("error {0}", error.ToString());
+                var error = Win32.GetLastError();
+                Tracable.LogLine("error {0}", error.ToRepr());
                 Win32.UnregisterClass(className, IntPtr.Zero);
                 return IntPtr.Zero;
             }
@@ -390,12 +390,12 @@ namespace Fenester.Lib.Win.Service.Helpers
                     windowClassEx.handleInstance,
                     IntPtr.Zero
                 );
-            Console.WriteLine("handle {0}", handle.ToString());
+            Tracable.LogLine("handle {0}", handle.ToRepr());
 
             if (handle == null)
             {
-                var error = Marshal.GetLastWin32Error();
-                Console.WriteLine("error {0}", error.ToString());
+                var error = Win32.GetLastError();
+                Tracable.LogLine("error {0}", error.ToRepr());
             }
             return handle;
         }
@@ -413,7 +413,7 @@ namespace Fenester.Lib.Win.Service.Helpers
                     Tracable.LogLine("MsgWaitForMultipleObjectsEx");
                     while (Win32.PeekMessage(out Message message, handle, 0, 0, PM.REMOVE))
                     {
-                        Tracable.LogLine("PeekMessage => ({0}) [{1}]", message.message.ToLong(), message.message.ToEnumName());
+                        Tracable.LogLine("PeekMessage => {0}", message.message.ToRepr());
                         var result = onMessage(message);
                         Win32.TranslateMessage(ref message);
                         Win32.DispatchMessage(ref message);

@@ -14,13 +14,13 @@ namespace Fenester.Lib.Win.Service
     {
         private int NextIdToRegister { get; set; } = 1;
 
-        private RunService RunService { get; set; }
+        private IRunServiceWin RunService { get; set; }
 
         private IntPtr Handle => RunService.Handle;
 
         public Action<string> OnLogLine { get; set; }
 
-        public KeyService(RunService runService)
+        public KeyService(IRunServiceWin runService)
         {
             RunService = runService;
         }
@@ -44,7 +44,7 @@ namespace Fenester.Lib.Win.Service
 
         public IntPtr OnMessage(Message message)
         {
-            this.LogLine("Message on {0} : ({1}) [{2}]", message.handle.ToRepr(), message.message.ToLong(), message.message.ToEnumName());
+            this.LogLine("Message on {0} : {1}", message.handle.ToRepr(), message.message.ToRepr());
             switch (message.message)
             {
                 case WM.HOTKEY:

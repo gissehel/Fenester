@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Fenester.Lib.Win.Service.Helpers.Enums;
+using Fenester.Lib.Win.Service.Helpers.Structs;
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -72,7 +74,7 @@ namespace Fenester.Lib.Win.Service.Helpers
 
         public static IntPtr SetWindowLong(IntPtr handle, GWL nIndex, IntPtr newLong)
         {
-            int error = 0;
+            Error error = 0;
             IntPtr result = IntPtr.Zero;
             // Win32 SetWindowLong doesn't clear error on success
             SetLastError(0);
@@ -81,19 +83,19 @@ namespace Fenester.Lib.Win.Service.Helpers
             {
                 // use SetWindowLong
                 var tempResult = IntSetWindowLong(handle, nIndex, ConvertHelper.ToInt32(newLong));
-                error = Marshal.GetLastWin32Error();
+                error = GetLastError();
                 result = new IntPtr(tempResult);
             }
             else
             {
                 // use SetWindowLongPtr
                 result = IntSetWindowLongPtr(handle, nIndex, newLong);
-                error = Marshal.GetLastWin32Error();
+                error = GetLastError();
             }
 
             if ((result == IntPtr.Zero) && (error != 0))
             {
-                throw new System.ComponentModel.Win32Exception(error);
+                throw new System.ComponentModel.Win32Exception((int)error);
             }
 
             return result;
@@ -216,5 +218,48 @@ namespace Fenester.Lib.Win.Service.Helpers
         public static extern bool PeekMessage(out Message message, IntPtr handleWindow, uint wMsgFilterMin, uint wMsgFilterMax, PM wRemoveMsg);
 
         #endregion window for keys
+
+        #region hooks
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool UnhookWindowsHookEx(IntPtr handleHook);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetWindowsHookEx(WH hookType, HookProc func, IntPtr handleInstance, int threadID);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr CallNextHookEx(IntPtr handleHook, int code, IntPtr wParam, IntPtr lParam);
+
+        #endregion hooks
+
+        #region RawInput
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool RegisterRawInputDevices
+        (
+            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] RawInputDevice[] rawInputDevices,
+            int numDevices,
+            int size
+        );
+
+        /// <summary>
+        /// Function to retrieve raw input data.
+        /// </summary>
+        /// <param name="handleRawInput">Handle to the raw input.</param>
+        /// <param name="command">Command to issue when retrieving data.</param>
+        /// <param name="rawInput">Raw input data.</param>
+        /// <param name="size">Number of bytes in the array.</param>
+        /// <param name="sizeHeader">Size of the header.</param>
+        /// <returns>0 if successful if rawInput is null, otherwise number of bytes if rawInput is not null.</returns>
+        [DllImport("user32.dll")]
+        public static extern int GetRawInputData(IntPtr handleRawInput, RawInputCommand command, out RawInput rawInput, ref int size, int sizeHeader);
+
+        #endregion RawInput
+
+        #region Errors
+
+        public static Error GetLastError() => (Error)Marshal.GetLastWin32Error();
+
+        #endregion Errors
     }
 }

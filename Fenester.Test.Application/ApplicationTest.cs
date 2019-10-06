@@ -14,7 +14,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace Fenester.Test.Application
 {
@@ -36,7 +35,7 @@ namespace Fenester.Test.Application
             ScreenRepositoryImpl = new ScreenRepository();
         }
 
-        protected override IEnumerable<Expression<Func<IInitializable>>> GetInitializaleExpressions => new List<Expression<Func<IInitializable>>>()
+        protected override InitializableExpressions GetInitializableExpressions => new InitializableExpressions()
         {
             ()=>RunServiceImpl,
             ()=>KeyServiceImpl,

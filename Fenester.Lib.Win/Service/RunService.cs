@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Fenester.Lib.Win.Service
 {
-    public class RunService : IRunService, IMessageProcessor, ITracable
+    public class RunService : IRunServiceWin, IMessageProcessor, ITracable
     {
         public IntPtr Handle { get; set; }
 
@@ -23,6 +23,9 @@ namespace Fenester.Lib.Win.Service
             => MessageProcessors
                 .Select<IMessageProcessor, Func<Message, IntPtr>>(mp => mp.OnMessage)
                 .Concat(FuncMessageProcessors);
+
+        public void AddFuncMessageProcessor(Func<Message, IntPtr> funcMessageProcessor)
+            => FuncMessageProcessors.Add(funcMessageProcessor);
 
         public Action<string> OnLogLine { get; set; }
 
