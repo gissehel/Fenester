@@ -49,7 +49,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConvertTestHelper.cs" />
     <Compile Include="DebuggableTest.cs" />
+    <Compile Include="ReflexionExtension.cs" />
     <Compile Include="TraceFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -60,6 +62,10 @@
     <ProjectReference Include="..\Fenester.Lib.Core\Fenester.Lib.Core.csproj">
       <Project>{1a073dc6-cad8-4077-a780-394420ab1737}</Project>
       <Name>Fenester.Lib.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fenester.Lib.Graphical\Fenester.Lib.Graphical.csproj">
+      <Project>{EC15D6E9-524E-4CEF-9175-8A2FA0B5108D}</Project>
+      <Name>Fenester.Lib.Graphical</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

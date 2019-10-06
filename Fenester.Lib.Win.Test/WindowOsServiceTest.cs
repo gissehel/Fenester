@@ -103,16 +103,6 @@ namespace Fenester.Lib.Win.Test
             Win32Window.Tracable = this;
         }
 
-        protected override void InitServices()
-        {
-            ServiceImpl.Init();
-        }
-
-        protected override void UninitServices()
-        {
-            ServiceImpl.Uninit();
-        }
-
         protected override void UninitTraces()
         {
             Win32Window.Tracable = null;

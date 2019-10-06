@@ -75,5 +75,13 @@ namespace Fenester.Lib.Business.Service
         }
 
         public Task<IEnumerable<IScreen>> GetScreens() => Task.FromResult<IEnumerable<IScreen>>(InternalScreens);
+
+        public void Init()
+        {
+        }
+
+        public void Uninit()
+        {
+        }
     }
 }

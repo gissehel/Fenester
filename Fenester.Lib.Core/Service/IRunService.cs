@@ -2,7 +2,7 @@
 
 namespace Fenester.Lib.Core.Service
 {
-    public interface IRunService
+    public interface IRunService : IInitializable
     {
         void RunFor(TimeSpan timeSpan);
 

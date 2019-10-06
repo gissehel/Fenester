@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Fenester.Lib.Core.Service
 {
-    public interface IKeyService
+    public interface IKeyService : IInitializable
     {
         IEnumerable<IKey> GetKeys();
 

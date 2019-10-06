@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Fenester.Lib.Core.Service
 {
-    public interface IWindowRepository
+    public interface IWindowRepository : IInitializable
     {
         Task<IWindow> GetWindow(IWindowId windowId);
 

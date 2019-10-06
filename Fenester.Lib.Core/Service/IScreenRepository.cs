@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Fenester.Lib.Core.Service
 {
-    public interface IScreenRepository
+    public interface IScreenRepository : IInitializable
     {
         Task<IEnumerable<IScreen>> GetScreens();
 

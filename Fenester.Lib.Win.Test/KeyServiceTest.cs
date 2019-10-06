@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Fenester.Lib.Win.Test
 {
@@ -24,25 +25,12 @@ namespace Fenester.Lib.Win.Test
             ServiceImpl = new KeyService(RunServiceImpl);
         }
 
-        protected override void InitServices()
-        {
-            RunServiceImpl.Init();
-            ServiceImpl.Init();
-        }
-
-        protected override void UninitServices()
-        {
-            if (ServiceImpl != null)
+        protected override IEnumerable<Expression<Func<IInitializable>>> GetInitializaleExpressions
+            => new List<Expression<Func<IInitializable>>>
             {
-                ServiceImpl.Uninit();
-            }
-            ServiceImpl = null;
-            if (RunServiceImpl != null)
-            {
-                RunServiceImpl.Uninit();
-            }
-            RunServiceImpl = null;
-        }
+                () => RunServiceImpl,
+                () => ServiceImpl,
+            };
 
         protected override void InitTraces()
         {

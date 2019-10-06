@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Fenester.Lib.Core.Service
 {
-    public interface IWindowOsService
+    public interface IWindowOsService : IInitializable
     {
         Task<IEnumerable<IWindow>> GetWindows();
 

@@ -53,5 +53,13 @@ namespace Fenester.Lib.Business.Service
         public bool Equals(IWindowId windowId1, IWindowId windowId2) => WindowIdEqualityComparer.Equals(windowId1, windowId2);
 
         public IDictionary<IWindowId, T> GetWindowDictionary<T>() => new Dictionary<IWindowId, T>(WindowIdEqualityComparer);
+
+        public void Init()
+        {
+        }
+
+        public void Uninit()
+        {
+        }
     }
 }

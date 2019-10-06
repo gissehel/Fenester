@@ -30,7 +30,7 @@ namespace Fenester.Lib.Win.Service
 
         public Task<IWindow> Move(IWindow iWindow, IRectangle rectangle) => Task.Run(() => MoveSync(iWindow, rectangle));
 
-        public Task<IWindow> FocusWindow(IWindow iWindow) => Task.Run(() => FocusWindow(iWindow));
+        public Task<IWindow> FocusWindow(IWindow iWindow) => Task.Run(() => FocusWindowSync(iWindow));
 
         public Task<IWindow> Unmanage(IWindow iWindow) => Task.Run(() => UnmanageSync(iWindow));
 
@@ -172,6 +172,10 @@ namespace Fenester.Lib.Win.Service
                 else
                 {
                     Win32Window.SetWindowStyles(window.Id.Handle, window.InitialWindowProps.WinStyles, window.InitialWindowProps.WinExStyles);
+                    if (window.InitialWindowProps.RectangleCurrent != null)
+                    {
+                        Win32Window.MoveWindowAndRedraw(window.Id.Handle, window.InitialWindowProps.RectangleCurrent);
+                    }
                 }
                 if (Win32Window.GetWindowProps(window))
                 {

@@ -81,6 +81,7 @@
     <Compile Include="Service\RunService.cs" />
     <Compile Include="Service\Helpers\Win32Monitor.cs" />
     <Compile Include="Service\Helpers\Win32Window.cs" />
+    <Compile Include="Service\ScreenOsService.cs" />
     <Compile Include="Service\WindowOsService.cs" />
   </ItemGroup>
   <ItemGroup>

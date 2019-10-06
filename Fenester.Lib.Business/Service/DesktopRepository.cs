@@ -47,5 +47,13 @@ namespace Fenester.Lib.Business.Service
             }
             return Task.FromResult(Desktops[index]);
         }
+
+        public void Init()
+        {
+        }
+
+        public void Uninit()
+        {
+        }
     }
 }
