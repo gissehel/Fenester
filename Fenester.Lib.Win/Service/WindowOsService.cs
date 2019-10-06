@@ -10,8 +10,10 @@ using System.Threading.Tasks;
 
 namespace Fenester.Lib.Win.Service
 {
-    public class WindowOsService : IWindowOsService
+    public class WindowOsService : IWindowOsService, ITracable
     {
+        public Action<string> OnLogLine { get; set; }
+
         public WindowOsService()
         {
         }
@@ -184,5 +186,13 @@ namespace Fenester.Lib.Win.Service
         }
 
         #endregion Sync
+
+        public void Init()
+        {
+        }
+
+        public void Uninit()
+        {
+        }
     }
 }

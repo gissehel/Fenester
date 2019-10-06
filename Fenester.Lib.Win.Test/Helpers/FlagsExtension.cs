@@ -2,7 +2,7 @@
 
 namespace Fenester.Lib.Win.Test
 {
-    public static class Flags
+    public static class FlagsExtension
     {
         public static FlagAnalyser<WS> FlagAnalyserWS { get; set; } = new FlagAnalyser<WS>()
             .Add("WS_OVERLAPPED", WS.OVERLAPPED)

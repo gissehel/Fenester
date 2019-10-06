@@ -6,5 +6,7 @@ namespace Fenester.Lib.Win.Service.Helpers
 
     public delegate bool Win32Callback(IntPtr handle, IntPtr lParam);
 
-    public delegate bool EnumWindowsProc(IntPtr hWnd, int lParam);
+    public delegate bool EnumWindowsProc(IntPtr handleWindow, int lParam);
+
+    public delegate IntPtr WindowProc(IntPtr handleWindow, WM wm, IntPtr wParam, IntPtr lParam);
 }

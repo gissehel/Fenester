@@ -4,8 +4,4 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Fenester.Lib.CoreDomain\Fenester.Lib.Core.csproj" />
-  </ItemGroup>
-
 </Project>

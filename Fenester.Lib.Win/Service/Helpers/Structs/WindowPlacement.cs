@@ -11,10 +11,10 @@ namespace Fenester.Lib.Win.Service.Helpers
 
         public SW showCmd;
 
-        public Point ptMinPosition;
+        public Point minPosition;
 
-        public Point ptMaxPosition;
+        public Point maxPosition;
 
-        public Rect rcNormalPosition;
+        public Rect normalPosition;
     }
 }

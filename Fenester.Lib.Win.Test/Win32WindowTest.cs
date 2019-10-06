@@ -1,4 +1,6 @@
 ﻿using Fenester.Lib.Core.Domain.Os;
+using Fenester.Lib.Core.Service;
+using Fenester.Lib.Test.Tools.Win;
 using Fenester.Lib.Win.Domain.Os;
 using Fenester.Lib.Win.Service;
 using Fenester.Lib.Win.Service.Helpers;
@@ -10,11 +12,22 @@ using System.Linq;
 namespace Fenester.Lib.Win.Test
 {
     [TestClass]
-    public class Win32WindowTest
+    public class Win32WindowTest : DebuggableTest
     {
+        protected override void InitTraces()
+        {
+            Win32Window.Tracable = this;
+        }
+
+        protected override void UninitTraces()
+        {
+            Win32Window.Tracable = null;
+        }
+
         [TestMethod]
         public void CompareGetHandles()
         {
+            TraceFile.SetName("CompareGetHandles");
             var list1 = new List<IntPtr>();
             var list2 = new List<IntPtr>();
 
@@ -27,13 +40,13 @@ namespace Fenester.Lib.Win.Test
             list2.Sort(intPtrComparer);
 
             TraceFile
-                .Get("List1")
-                .Each(list1, (trace, handle) => trace.Out("{0:x16}", handle))
+                .Get("CompareGetHandles-List1")
+                .Each(list1, (trace, handle) => trace.OutLine(handle.ToRepr()))
                 .Close()
             ;
             TraceFile
-                .Get("List2")
-                .Each(list2, (trace, handle) => trace.Out("{0:x16}", handle))
+                .Get("CompareGetHandles-List2")
+                .Each(list2, (trace, handle) => trace.OutLine(handle.ToRepr()))
                 .Close()
             ;
 
@@ -43,30 +56,27 @@ namespace Fenester.Lib.Win.Test
         [TestMethod]
         public void GetOpenWindowsTest()
         {
+            TraceFile.SetName("GetOpenWindowsTest");
             var windowsByHandle = Win32Window.GetOpenWindows();
 
             var windows = windowsByHandle
                 .Values.OrderBy(window => (window.Id as WindowId).Handle.ToInt64())
                 .Select(window => window as IWindow);
 
-            TraceFile
-                .Get("Windows")
-                .Each(
-                    windows,
-                    (trace, window) => trace.Out
-                        (
-                            "{0}:[{1}] ({2}) [{3}]",
-                            window.Canonical,
-                            window.Title,
-                            window.Class,
-                            window.OsVisibility
-                        )
-                )
-                .Close()
-            ;
+            foreach (var window in windows)
+            {
+                this.LogLine
+                (
+                    "{0}:[{1}] ({2}) [{3}]",
+                    window.Canonical,
+                    window.Title,
+                    window.Class,
+                    window.OsVisibility
+                );
+            }
         }
 
-        private void ChangeWindow(string traceName, Action<IntPtr> change, Action<IntPtr, IWindow> afterChange)
+        private void ChangeWindow(Action<IntPtr> change, Action<IntPtr, IWindow> afterChange)
         {
             var windowsByHandle = Win32Window.GetOpenWindows();
 
@@ -76,59 +86,52 @@ namespace Fenester.Lib.Win.Test
                 .Where(window => window.Class == "TTOTAL_CMD")
             ;
 
-            TraceFile
-                .Get(traceName)
-                .Each(
-                    windows,
-                    (trace, window) =>
+            foreach (var window in windows)
+            {
+                var handle = (window.Id as WindowId).Handle;
+                {
+                    if (Win32Window.GetWindowStyles(handle, out WS styles, out WS_EX extStyles))
                     {
-                        var handle = (window.Id as WindowId).Handle;
-                        {
-                            if (Win32Window.GetWindowStyles(handle, out WS styles, out WS_EX extStyles))
-                            {
-                                trace.Out
-                                    (
-                                        "{0}:[{1}] ({2}) [{3}] : {4} - {5} - {6}",
-                                        window.Canonical,
-                                        window.Title,
-                                        window.Class,
-                                        window.OsVisibility,
-                                        styles,
-                                        extStyles,
-                                        GetStyles(styles, extStyles)
-                                   );
-                            }
-                        }
-                        change(handle);
-                        {
-                            if (Win32Window.GetWindowStyles(handle, out WS styles, out WS_EX extStyles))
-                            {
-                                trace.Out
-                                    (
-                                        "{0}:[{1}] ({2}) [{3}] : {4} - {5} - {6}",
-                                        window.Canonical,
-                                        window.Title,
-                                        window.Class,
-                                        window.OsVisibility,
-                                        styles,
-                                        extStyles,
-                                        GetStyles(styles, extStyles)
-                                   );
-                            }
-                        }
-                        afterChange(handle, window);
+                        this.LogLine
+                            (
+                                "{0}:[{1}] ({2}) [{3}] : {4} - {5} - {6}",
+                                window.Canonical,
+                                window.Title,
+                                window.Class,
+                                window.OsVisibility,
+                                styles,
+                                extStyles,
+                                GetStyles(styles, extStyles)
+                           );
                     }
-                )
-                .Close()
-            ;
+                }
+                change(handle);
+                {
+                    if (Win32Window.GetWindowStyles(handle, out WS styles, out WS_EX extStyles))
+                    {
+                        this.LogLine
+                            (
+                                "{0}:[{1}] ({2}) [{3}] : {4} - {5} - {6}",
+                                window.Canonical,
+                                window.Title,
+                                window.Class,
+                                window.OsVisibility,
+                                styles,
+                                extStyles,
+                                GetStyles(styles, extStyles)
+                           );
+                    }
+                }
+                afterChange(handle, window);
+            }
         }
 
         [TestMethod]
-        public void ChangeWindowTest()
+        public void ChangeWindow()
         {
+            TraceFile.SetName("ChangeWindow");
             ChangeWindow
             (
-                "Windows_to_change",
                 (handle) =>
                 {
                     Win32Window.ChangeWindowStyles(handle, 0, WS.MINIMIZEBOX | WS.MAXIMIZEBOX | WS.THICKFRAME, 0, 0);
@@ -144,9 +147,9 @@ namespace Fenester.Lib.Win.Test
         [TestMethod]
         public void ChangeWindowBackTest()
         {
+            TraceFile.SetName("ChangeWindowBackTest");
             ChangeWindow
             (
-                "Windows_to_change_back",
                 (handle) =>
                 {
                     // Win32Window.SetWindowStyles(handle, WS.BORDER, WS.POPUPWINDOW, 0, 0);
@@ -166,8 +169,8 @@ namespace Fenester.Lib.Win.Test
             => string.Format
             (
                 "[{0}] [{1}]",
-                string.Join("|", Flags.FlagAnalyserWS.GetNames(style)),
-                string.Join("|", Flags.FlagAnalyserWSEX.GetNames(exStyle))
+                string.Join("|", FlagsExtension.FlagAnalyserWS.GetNames(style)),
+                string.Join("|", FlagsExtension.FlagAnalyserWSEX.GetNames(exStyle))
             );
     }
 }

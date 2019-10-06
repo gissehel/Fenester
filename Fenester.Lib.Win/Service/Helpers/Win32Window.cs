@@ -1,17 +1,19 @@
 ﻿using Fenester.Lib.Core.Domain.Graphical;
 using Fenester.Lib.Core.Enums;
+using Fenester.Lib.Core.Service;
 using Fenester.Lib.Win.Domain.Os;
-using Fenester.Lib.Win.Service.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Fenester.Lib.Win.Service
+namespace Fenester.Lib.Win.Service.Helpers
 {
     public static class Win32Window
     {
+        public static ITracable Tracable { get; set; }
+
         public static bool GetWindowProps(Window window)
         {
             try
@@ -36,16 +38,16 @@ namespace Fenester.Lib.Win.Service
                         case SW.SHOWMINIMIZED:
                             window.OsVisibility = Visibility.Minimized;
                             window.RectangleCurrent = null;
-                            window.Rectangle = Win32Helper.GetRectangleFromRect(windowPlacement.rcNormalPosition);
+                            window.Rectangle = windowPlacement.normalPosition.GetRectangleFromRect();
                             break;
 
                         case SW.SHOWMAXIMIZED:
                             window.OsVisibility = Visibility.Maximised;
                             if (windowRect.HasValue)
                             {
-                                window.RectangleCurrent = Win32Helper.GetRectangleFromRect(windowRect.Value);
+                                window.RectangleCurrent = windowRect.Value.GetRectangleFromRect();
                             }
-                            window.Rectangle = Win32Helper.GetRectangleFromRect(windowPlacement.rcNormalPosition);
+                            window.Rectangle = windowPlacement.normalPosition.GetRectangleFromRect();
                             break;
 
                         default:
@@ -55,9 +57,9 @@ namespace Fenester.Lib.Win.Service
                                 window.OsVisibility = Visibility.Normal;
                                 if (windowRect.HasValue)
                                 {
-                                    window.RectangleCurrent = Win32Helper.GetRectangleFromRect(windowRect.Value);
+                                    window.RectangleCurrent = windowRect.Value.GetRectangleFromRect();
                                 }
-                                window.Rectangle = Win32Helper.GetRectangleFromRect(windowPlacement.rcNormalPosition);
+                                window.Rectangle = windowPlacement.normalPosition.GetRectangleFromRect();
                             }
                             else
                             {
@@ -319,8 +321,107 @@ namespace Fenester.Lib.Win.Service
             Win32.DrawMenuBar(handle);
         }
 
-        private static WS ToWS(this IntPtr self) => (WS)unchecked((uint)self.ToInt32());
+        public static IntPtr CreateWindow(Func<Message, IntPtr> processMessage, string className, string title = null)
+        {
+            var windowProc = new WindowProc((IntPtr handleWindow, WM wm, IntPtr wParam, IntPtr lParam) =>
+            {
+                IntPtr result = IntPtr.Zero;
+                if (processMessage != null)
+                {
+                    var message = new Message
+                    {
+                        handle = handleWindow,
+                        message = wm,
+                        wParam = wParam,
+                        lParam = lParam,
+                    }; ;
+                    result = processMessage(message);
+                }
+                if (result == IntPtr.Zero)
+                {
+                    return Win32.DefWindowProc(handleWindow, wm, wParam, lParam);
+                }
+                else
+                {
+                    return result;
+                }
+            });
 
-        private static WS_EX ToWS_EX(this IntPtr self) => (WS_EX)unchecked((uint)self.ToInt32());
+            var windowClassEx = new WindowClassEx()
+            {
+                size = Marshal.SizeOf(typeof(WindowClassEx)),
+                style = CS.HREDRAW | CS.VREDRAW,
+                windowProc = Marshal.GetFunctionPointerForDelegate(windowProc),
+                classExtra = 0,
+                windowExtra = 0,
+                handleInstance = IntPtr.Zero,
+                handleIcon = IntPtr.Zero,
+                handleCursor = IntPtr.Zero,
+                handlebrBackground = IntPtr.Zero,
+                menuName = null,
+                className = className,
+                handleIconSm = IntPtr.Zero,
+            };
+
+            Console.WriteLine("windowClassEx {0}", windowClassEx.ToString());
+
+            var registeredClassEx = Win32.RegisterClassEx(ref windowClassEx);
+            Console.WriteLine("registeredClassEx {0}", registeredClassEx.ToString());
+            if (registeredClassEx == 0)
+            {
+                var error = Marshal.GetLastWin32Error();
+                Console.WriteLine("error {0}", error.ToString());
+                Win32.UnregisterClass(className, IntPtr.Zero);
+                return IntPtr.Zero;
+            }
+
+            var handle = Win32.CreateWindowEx
+                (
+                    WS_EX.NONE,
+                    registeredClassEx,
+                    title ?? windowClassEx.className,
+                    WS.NONE,
+                    0,
+                    0,
+                    0,
+                    0,
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    windowClassEx.handleInstance,
+                    IntPtr.Zero
+                );
+            Console.WriteLine("handle {0}", handle.ToString());
+
+            if (handle == null)
+            {
+                var error = Marshal.GetLastWin32Error();
+                Console.WriteLine("error {0}", error.ToString());
+            }
+            return handle;
+        }
+
+        public static void ListenMessages(IntPtr handle, TimeSpan timeout, Func<Message, IntPtr> onMessage, Func<bool> shouldContinue)
+        {
+            DateTime start = DateTime.Now;
+
+            var remaining = timeout - (DateTime.Now - start);
+            while ((timeout == TimeSpan.Zero || remaining > TimeSpan.Zero) && (shouldContinue == null || shouldContinue()))
+            {
+                Tracable.LogLine("while : remaining = [{0}]", remaining.TotalMilliseconds);
+                if (Win32.MsgWaitForMultipleObjectsEx(0, new IntPtr[] { }, remaining.ToUIntMilliseconds(), QS.ALLEVENTS, MWMO.INPUTAVAILABLE) == WAIT.OBJECT_0)
+                {
+                    Tracable.LogLine("MsgWaitForMultipleObjectsEx");
+                    while (Win32.PeekMessage(out Message message, handle, 0, 0, PM.REMOVE))
+                    {
+                        Tracable.LogLine("PeekMessage => ({0}) [{1}]", message.message.ToLong(), message.message.ToEnumName());
+                        var result = onMessage(message);
+                        Win32.TranslateMessage(ref message);
+                        Win32.DispatchMessage(ref message);
+                    }
+                }
+                remaining = timeout - (DateTime.Now - start);
+                Tracable.LogLine("end while : remaining = [{0}]", remaining.TotalMilliseconds);
+            }
+        }
     }
 }

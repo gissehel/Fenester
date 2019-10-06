@@ -80,7 +80,7 @@ namespace Fenester.Lib.Win.Service.Helpers
             if (IntPtr.Size == 4)
             {
                 // use SetWindowLong
-                var tempResult = IntSetWindowLong(handle, nIndex, Win32Helper.ToInt32(newLong));
+                var tempResult = IntSetWindowLong(handle, nIndex, ConvertHelper.ToInt32(newLong));
                 error = Marshal.GetLastWin32Error();
                 result = new IntPtr(tempResult);
             }
@@ -154,6 +154,67 @@ namespace Fenester.Lib.Win.Service.Helpers
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool RegisterHotKey(IntPtr handle, int id, KeyModifiers fsModifiers, Keys vk);
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool UnregisterHotKey(IntPtr handle, int id);
+
         #endregion keys
+
+        #region window for keys
+
+        [DllImport("user32.dll", SetLastError = true, EntryPoint = "CreateWindowEx")]
+        public static extern IntPtr CreateWindowEx
+            (
+                WS_EX exStyle,
+                ushort registeredClassEx,
+                string windowName,
+                WS style,
+                int x,
+                int y,
+                int nWidth,
+                int nHeight,
+                IntPtr handleWindowParent,
+                IntPtr handleMenu,
+                IntPtr handleInstance,
+                IntPtr param
+            );
+
+        [DllImport("user32.dll", SetLastError = true, EntryPoint = "RegisterClassEx")]
+        public static extern ushort RegisterClassEx([In] ref WindowClassEx windowClassEx);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool UnregisterClass(string className, IntPtr handleInstance);
+
+        [DllImport("user32.dll")]
+        public static extern int GetMessage(out Message message, IntPtr handle, uint wMsgFilterMin, uint wMsgFilterMax);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr DefWindowProc(IntPtr handleWindow, WM message, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern void PostQuitMessage(int exitCode);
+
+        //[DllImport("user32.dll")]
+        //static extern sbyte GetMessage(out Message lpMsg, IntPtr handleWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr LoadCursor(IntPtr handleInstance, int cursorName);
+
+        [DllImport("user32.dll")]
+        public static extern bool TranslateMessage([In] ref Message message);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr DispatchMessage([In] ref Message message);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool DestroyWindow(IntPtr handleWindow);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern WAIT MsgWaitForMultipleObjectsEx(uint count, IntPtr[] pHandles, uint milliseconds, QS dwWakeMask, MWMO dwFlags);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool PeekMessage(out Message message, IntPtr handleWindow, uint wMsgFilterMin, uint wMsgFilterMax, PM wRemoveMsg);
+
+        #endregion window for keys
     }
 }
