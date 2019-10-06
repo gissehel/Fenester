@@ -61,6 +61,8 @@ namespace Fenester.Test.Application
 
         #endregion DebuggableTest overrides
 
+        #region Services
+
         public RunService RunServiceImpl { get; set; }
         public IRunService RunService => RunServiceImpl;
 
@@ -82,15 +84,48 @@ namespace Fenester.Test.Application
         public RectangleService RectangleServiceImpl { get; set; }
         public IRectangleService RectangleService => RectangleServiceImpl;
 
+        #endregion Services
+
         public IKey GetTestKey(string name) => KeyService
             .GetKeys()
             .Where(k => k.Name == name)
             .FirstOrDefault();
 
+        private class WindowMask
+        {
+            public string Class { get; set; }
+            public string Title { get; set; }
+        }
+
+        private bool CheckMask(WindowMask mask, IWindow window)
+        {
+            if (mask.Class != null && mask.Title == null)
+            {
+                return window.Class == mask.Class;
+            }
+            if (mask.Class != null && mask.Title != null)
+            {
+                return window.Class == mask.Class && window.Title == mask.Title;
+            }
+            if (mask.Class == null && mask.Title != null)
+            {
+                return window.Title == mask.Title;
+            }
+            return false;
+        }
+
+        private List<WindowMask> TestMasks { get; set; } = new List<WindowMask>
+        {
+            new WindowMask { Class = "TTOTAL_CMD" },
+            new WindowMask { Class = "TFormMain" },
+            new WindowMask { Class = "TLister" },
+            new WindowMask { Class = "ApplicationFrameWindow", Title="Netflix" },
+        };
+
         public IEnumerable<IWindow> GetTestWindows => WindowOsServiceImpl
             .GetWindowsSync()
             .Cast<IWindow>()
-            .Where(w => w.Class == "TTOTAL_CMD" || w.Class == "TFormMain")
+            .Where(w => TestMasks.Any(testMask => CheckMask(testMask, w)))
             ;
 
         public IEnumerable<IWindow> GetTrayWindows => WindowOsServiceImpl
@@ -104,6 +139,29 @@ namespace Fenester.Test.Application
             var shortcut = KeyService.GetShortcut(GetTestKey(keyName), keyModifier);
             var operation = new Operation(operationName, action);
             KeyService.RegisterShortcut(shortcut, operation);
+        }
+
+        private void DispatchOnScreen(List<IWindow> windows, IScreen screen)
+        {
+            var windowsCount = windows.Count;
+
+            if (windowsCount > 0)
+            {
+                var totalWidth = screen.Rectangle.Size.Width;
+                var width = (totalWidth - (windowsCount - 1) * 10) / windowsCount;
+
+                for (int windowIndex = 0; windowIndex < windowsCount; windowIndex++)
+                {
+                    var left = screen.Rectangle.Position.Left + (width + 10) * windowIndex;
+                    var top = screen.Rectangle.Position.Top;
+                    var height = screen.Rectangle.Size.Height;
+                    var rectangle = new Rectangle(width, height, left, top);
+                    var window = windows[windowIndex];
+                    WindowOsServiceImpl.MoveSync(window, rectangle);
+
+                    this.LogLine("Moving window {0} to {1}", window.ToRepr(), rectangle.Canonical);
+                }
+            }
         }
 
         [TestMethod]
@@ -142,25 +200,47 @@ namespace Fenester.Test.Application
                 WindowOsServiceImpl.FocusWindowSync(testWindows[currentPosition]);
             }
 
-            AddAction(KeyModifier.Alt, "Right", "FocusNext", focusNext);
-
-            if (testWindowsCount > 0)
+            void focusPrev()
             {
-                var totalWidth = screen.Rectangle.Size.Width;
-                var width = (totalWidth - (testWindowsCount - 1) * 10) / testWindowsCount;
-
-                for (int windowIndex = 0; windowIndex < testWindowsCount; windowIndex++)
-                {
-                    var left = screen.Rectangle.Position.Left + (width + 10) * windowIndex;
-                    var top = screen.Rectangle.Position.Top;
-                    var height = screen.Rectangle.Size.Height;
-                    var rectangle = new Rectangle(width, height, left, top);
-                    var testWindow = testWindows[windowIndex];
-                    WindowOsServiceImpl.MoveSync(testWindow, rectangle);
-
-                    this.LogLine("Moving window {0} to {1}", testWindow.ToRepr(), rectangle.Canonical);
-                }
+                currentPosition += testWindowsCount;
+                currentPosition--;
+                currentPosition %= testWindowsCount;
+                this.LogLine("  -> Focusing {0}]", testWindows[currentPosition].ToRepr());
+                WindowOsServiceImpl.FocusWindowSync(testWindows[currentPosition]);
             }
+
+            void moveToNewPosition(int newPosition)
+            {
+                var currentWindow = testWindows[currentPosition];
+                testWindows.Remove(currentWindow);
+                testWindows.Insert(newPosition, currentWindow);
+
+                this.LogLine("  -> Moving {0}]", currentWindow.ToRepr());
+
+                DispatchOnScreen(testWindows, screen);
+                currentPosition = newPosition;
+                WindowOsServiceImpl.FocusWindowSync(currentWindow);
+            }
+
+            void moveToNext()
+            {
+                var newPosition = (currentPosition + 1) % testWindowsCount;
+                moveToNewPosition(newPosition);
+            }
+
+            void moveToPrev()
+            {
+                var newPosition = (currentPosition + testWindowsCount - 1) % testWindowsCount;
+                moveToNewPosition(newPosition);
+            }
+
+            AddAction(KeyModifier.Alt, "Left", "FocusPrev", focusPrev);
+            AddAction(KeyModifier.Alt, "Right", "FocusNext", focusNext);
+            AddAction(KeyModifier.Alt, "J", "MoveToPrev", moveToPrev);
+            AddAction(KeyModifier.Alt, "K", "MoveToNext", moveToNext);
+
+            DispatchOnScreen(testWindows, screen);
+
             WindowOsServiceImpl.HideSync(trayWindow);
             focusNext();
             RunService.Run();
