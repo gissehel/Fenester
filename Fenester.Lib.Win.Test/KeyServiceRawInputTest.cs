@@ -31,7 +31,7 @@ namespace Fenester.Lib.Win.Test
         protected override void CreateServices()
         {
             RunServiceImpl = new RunService();
-            ServiceImpl = new KeyServiceRawInput();
+            ServiceImpl = new KeyServiceRawInput(RunServiceImpl);
         }
 
         protected override InitializableExpressions GetInitializableExpressions

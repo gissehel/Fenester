@@ -10,13 +10,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Keys = Fenester.Lib.Win.Service.Helpers.Keys;
+using Message = Fenester.Lib.Win.Service.Helpers.Message;
+using Shortcut = Fenester.Lib.Win.Domain.Key.Shortcut;
 
 namespace Fenester.Lib.Win.Service
 {
-    public class KeyServiceRawInput : IKeyService, ITracable
+    public class KeyServiceRawInput : IKeyService, IMessageProcessor, ITracable
     {
-        public KeyServiceRawInput()
+        private IRunServiceWin RunService { get; set; }
+
+        public KeyServiceRawInput(IRunServiceWin runService)
         {
+            RunService = runService;
         }
 
         private List<Key> Keys { get; set; } = Enum
@@ -82,32 +89,8 @@ namespace Fenester.Lib.Win.Service
         {
             this.LogLine("KeyServiceRawInput.Init()");
 
-            ClassName = "Fenester::KeyServiceRawInput-" + Guid.NewGuid().ToString();
-            IntPtr OnMessage(Message message)
-            {
-                this.LogLine("    => Local message : {0} - {1} - {2} - {3}", message.handle.ToRepr(), message.message.ToRepr(), message.wParam.ToString(), message.lParam.ToString());
-                if (message.message == WM.INPUT)
-                {
-                    int size = Marshal.SizeOf(typeof(RawInput));
-                    var sizeRead = Win32.GetRawInputData(message.lParam, RawInputCommand.Input, out RawInput rawInput, ref size, Marshal.SizeOf(typeof(RawInputHeader)));
-                    this.LogLine("        => sizeRead : {0}", sizeRead);
-                    if (sizeRead > 0)
-                    {
-                        this.LogLine("        => rawInput.Header.Type : {0}", rawInput.Header.Type.ToRepr());
-                        if (rawInput.Header.Type == RawInputType.Keyboard)
-                        {
-                            this.LogLine("        => rawInput.Keyboard.MakeCode : {0}", rawInput.Keyboard.MakeCode);
-                            this.LogLine("        => rawInput.Keyboard.Flags : {0}", rawInput.Keyboard.Flags.ToRepr());
-                            this.LogLine("        => rawInput.Keyboard.Reserved : {0}", rawInput.Keyboard.Reserved);
-                            this.LogLine("        => rawInput.Keyboard.ExtraInformation : {0}", rawInput.Keyboard.ExtraInformation);
-                            this.LogLine("        => rawInput.Keyboard.Message : {0}", rawInput.Keyboard.Message.ToRepr());
-                            this.LogLine("        => rawInput.Keyboard.VirtualKey : {0}", rawInput.Keyboard.VirtualKey.ToRepr());
-                        }
-                    }
-                }
-                return IntPtr.Zero;
-            }
-            Handle = Win32Window.CreateWindow(OnMessage, ClassName);
+            var form = new Form();
+            Handle = form.Handle;
 
             var rawInputDevice = new RawInputDevice
             {
@@ -131,6 +114,8 @@ namespace Fenester.Lib.Win.Service
             {
                 this.LogLine("    => Success");
             }
+
+            RunService.RegisterMessageProcessor(this);
         }
 
         private IntPtr HandleHook { get; set; }
@@ -150,6 +135,7 @@ namespace Fenester.Lib.Win.Service
                 UnregisterShortcut(registeredShortcut);
             }
             RegisteredShortcuts.Clear();
+
             var rawInputDevice = new RawInputDevice
             {
                 UsagePage = HIDUsagePage.Generic,
@@ -173,6 +159,32 @@ namespace Fenester.Lib.Win.Service
                 Win32.UnregisterClass(ClassName, IntPtr.Zero);
                 ClassName = null;
             }
+            RunService.UnregisterMessageProcessor(this);
+        }
+
+        public IntPtr OnMessage(Message message)
+        {
+            this.LogLine("    => Local message : {0} - {1} - {2} - {3}", message.handle.ToRepr(), message.message.ToRepr(), message.wParam.ToString(), message.lParam.ToString());
+            if (message.message == WM.INPUT)
+            {
+                int size = Marshal.SizeOf(typeof(RawInput));
+                var sizeRead = Win32.GetRawInputData(message.lParam, RawInputCommand.Input, out RawInput rawInput, ref size, Marshal.SizeOf(typeof(RawInputHeader)));
+                this.LogLine("        => sizeRead : {0}", sizeRead);
+                if (sizeRead > 0)
+                {
+                    this.LogLine("        => rawInput.Header.Type : {0}", rawInput.Header.Type.ToRepr());
+                    if (rawInput.Header.Type == RawInputType.Keyboard)
+                    {
+                        this.LogLine("        => rawInput.Keyboard.MakeCode : {0}", rawInput.Keyboard.MakeCode);
+                        this.LogLine("        => rawInput.Keyboard.Flags : {0}", rawInput.Keyboard.Flags.ToRepr());
+                        this.LogLine("        => rawInput.Keyboard.Reserved : {0}", rawInput.Keyboard.Reserved);
+                        this.LogLine("        => rawInput.Keyboard.ExtraInformation : {0}", rawInput.Keyboard.ExtraInformation);
+                        this.LogLine("        => rawInput.Keyboard.Message : {0}", rawInput.Keyboard.Message.ToRepr());
+                        this.LogLine("        => rawInput.Keyboard.VirtualKey : {0}", rawInput.Keyboard.VirtualKey.ToRepr());
+                    }
+                }
+            }
+            return IntPtr.Zero;
         }
     }
 }
