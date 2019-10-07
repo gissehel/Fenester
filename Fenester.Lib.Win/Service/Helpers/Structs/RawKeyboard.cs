@@ -16,15 +16,15 @@ namespace Fenester.Lib.Win.Service.Helpers.Structs
         public RawKeyboardFlags Flags;
 
         /// <summary>Reserved.</summary>
-        public short Reserved;
+        public ushort Reserved;
 
         /// <summary>Virtual key code.</summary>
-        public Keys VirtualKey;
+        public VirtualKeys VirtualKey;
 
         /// <summary>Corresponding window message.</summary>
         public WM Message;
 
         /// <summary>Extra information.</summary>
-        public int ExtraInformation;
+        public ulong ExtraInformation;
     }
 }

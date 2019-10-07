@@ -96,7 +96,11 @@ namespace Fenester.Lib.Win.Service
                         this.LogLine("        => rawInput.Header.Type : {0}", rawInput.Header.Type.ToRepr());
                         if (rawInput.Header.Type == RawInputType.Keyboard)
                         {
+                            this.LogLine("        => rawInput.Keyboard.MakeCode : {0}", rawInput.Keyboard.MakeCode);
                             this.LogLine("        => rawInput.Keyboard.Flags : {0}", rawInput.Keyboard.Flags.ToRepr());
+                            this.LogLine("        => rawInput.Keyboard.Reserved : {0}", rawInput.Keyboard.Reserved);
+                            this.LogLine("        => rawInput.Keyboard.ExtraInformation : {0}", rawInput.Keyboard.ExtraInformation);
+                            this.LogLine("        => rawInput.Keyboard.Message : {0}", rawInput.Keyboard.Message.ToRepr());
                             this.LogLine("        => rawInput.Keyboard.VirtualKey : {0}", rawInput.Keyboard.VirtualKey.ToRepr());
                         }
                     }

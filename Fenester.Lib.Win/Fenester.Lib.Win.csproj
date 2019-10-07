@@ -59,6 +59,7 @@
     <Compile Include="Service\Helpers\Enums\RawInputType.cs" />
     <Compile Include="Service\Helpers\Enums\RawKeyboardFlags.cs" />
     <Compile Include="Service\Helpers\Enums\RIDEV.cs" />
+    <Compile Include="Service\Helpers\Enums\VirtualKeys.cs" />
     <Compile Include="Service\Helpers\Enums\WH.cs" />
     <Compile Include="Service\Helpers\Structs\DisplayInfo.cs" />
     <Compile Include="Service\Helpers\Enums\GWL.cs" />
