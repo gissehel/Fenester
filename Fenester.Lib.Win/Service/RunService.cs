@@ -4,6 +4,8 @@ using Fenester.Lib.Win.Service.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using Message = Fenester.Lib.Win.Service.Helpers.Message;
 
 namespace Fenester.Lib.Win.Service
 {
@@ -13,11 +15,16 @@ namespace Fenester.Lib.Win.Service
 
         private string ClassName { get; set; }
 
-        private bool UseWindow { get; } = false;
+        private RunWindowStrategy RunWindowStrategy { get; }
 
         private List<IMessageProcessor> MessageProcessors { get; } = new List<IMessageProcessor>();
 
         private List<Func<Message, IntPtr>> FuncMessageProcessors { get; } = new List<Func<Message, IntPtr>>();
+
+        public RunService(RunWindowStrategy runWindowStrategy)
+        {
+            RunWindowStrategy = runWindowStrategy;
+        }
 
         private IEnumerable<Func<Message, IntPtr>> AllMessageProcessors
             => MessageProcessors
@@ -31,21 +38,30 @@ namespace Fenester.Lib.Win.Service
 
         public void Init()
         {
-            if (UseWindow)
+            switch (RunWindowStrategy)
             {
-                ClassName = "Fenester::KeyService-" + Guid.NewGuid().ToString();
-                Handle = Win32Window.CreateWindow(OnMessage, ClassName);
-            }
-            else
-            {
-                Handle = IntPtr.Zero;
+                case RunWindowStrategy.Win32:
+                    ClassName = "Fenester::KeyService-" + Guid.NewGuid().ToString();
+                    Handle = Win32Window.CreateWindow(OnMessage, ClassName);
+                    break;
+
+                case RunWindowStrategy.WinForms:
+                    var form = new Form();
+                    Handle = form.Handle;
+                    break;
+
+                case RunWindowStrategy.NoWindow:
+                default:
+                    Handle = IntPtr.Zero;
+                    break;
             }
 
             this.LogLine("RunService.Init : ({0}) => {1}", ClassName, Handle.ToRepr());
-            if (Handle != IntPtr.Zero)
-            {
-                Win32.ShowWindow(Handle, SW.MINIMIZE);
-            }
+
+            //if (Handle != IntPtr.Zero)
+            //{
+            //    Win32.ShowWindow(Handle, SW.MINIMIZE);
+            //}
         }
 
         public void Uninit()
@@ -54,7 +70,10 @@ namespace Fenester.Lib.Win.Service
             if (Handle != IntPtr.Zero)
             {
                 Win32.DestroyWindow(Handle);
-                Win32.UnregisterClass(ClassName, IntPtr.Zero);
+                if (ClassName != null)
+                {
+                    Win32.UnregisterClass(ClassName, IntPtr.Zero);
+                }
                 Handle = IntPtr.Zero;
             }
         }

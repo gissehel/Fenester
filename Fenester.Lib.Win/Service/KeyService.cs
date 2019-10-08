@@ -64,29 +64,29 @@ namespace Fenester.Lib.Win.Service
             return IntPtr.Zero;
         }
 
-        private List<Key> Keys { get; set; } = Enum
+        private List<Key<Keys>> Keys { get; set; } = Enum
             .GetValues(typeof(Keys))
             .Cast<Keys>()
-            .Select(keys => new Key(keys))
+            .Select(keys => new Key<Keys>(keys))
             .ToList()
         ;
 
-        private Dictionary<int, RegisteredShortcut> RegisteredShortcuts { get; } = new Dictionary<int, RegisteredShortcut>();
+        private Dictionary<int, RegisteredShortcut<Keys>> RegisteredShortcuts { get; } = new Dictionary<int, RegisteredShortcut<Keys>>();
 
         public IEnumerable<IKey> GetKeys() => Keys.Cast<IKey>();
 
         public IShortcut GetShortcut(IKey iKey, KeyModifier keyModifier)
         {
-            if (iKey is Key key)
+            if (iKey is Key<Keys> key)
             {
-                return new Shortcut(key, keyModifier);
+                return new Shortcut<Keys>(key, keyModifier);
             }
             return null;
         }
 
         public IRegisteredShortcut RegisterShortcut(IShortcut iShortcut, IOperation operation)
         {
-            if (iShortcut is Shortcut shortcut)
+            if (iShortcut is Shortcut<Keys> shortcut)
             {
                 try
                 {
@@ -97,12 +97,12 @@ namespace Fenester.Lib.Win.Service
                             Handle,
                             id,
                             shortcut.KeyModifier.ToKeyModifiers(),
-                            shortcut.Key.Keys
+                            shortcut.Key.Value
                         );
                     this.LogLine("RegisterHotKey({0}, {1}, {2}, {3}) => [{4}]", Handle.ToRepr(), id, operation.Name, shortcut.Name, result ? "true" : "false");
                     if (result)
                     {
-                        var registeredShortcut = new RegisteredShortcut(shortcut, operation, id);
+                        var registeredShortcut = new RegisteredShortcut<Keys>(shortcut, operation, id);
                         RegisteredShortcuts[id] = registeredShortcut;
                         return registeredShortcut;
                     }
@@ -116,7 +116,7 @@ namespace Fenester.Lib.Win.Service
 
         public void UnregisterShortcut(IRegisteredShortcut iRegisteredShortcut)
         {
-            if (iRegisteredShortcut is RegisteredShortcut registeredShortcut)
+            if (iRegisteredShortcut is RegisteredShortcut<Keys> registeredShortcut)
             {
                 var id = registeredShortcut.Id;
                 if (RegisteredShortcuts.ContainsKey(id))

@@ -1,11 +1,12 @@
 ﻿using Fenester.Lib.Core.Domain.Fenester;
 using Fenester.Lib.Core.Domain.Key;
+using System;
 
 namespace Fenester.Lib.Win.Domain.Key
 {
-    public class RegisteredShortcut : IRegisteredShortcut
+    public class RegisteredShortcut<E> : IRegisteredShortcut where E : struct, IComparable
     {
-        public RegisteredShortcut(Shortcut shortcut, IOperation operation, int id)
+        public RegisteredShortcut(Shortcut<E> shortcut, IOperation operation, int id)
         {
             Id = id;
             Shortcut = shortcut;
@@ -14,7 +15,7 @@ namespace Fenester.Lib.Win.Domain.Key
 
         public int Id { get; set; }
 
-        public Shortcut Shortcut { get; }
+        public Shortcut<E> Shortcut { get; }
 
         public IOperation Operation { get; }
 

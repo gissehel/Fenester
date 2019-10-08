@@ -5,28 +5,30 @@ using System.Linq;
 
 namespace Fenester.Lib.Win.Domain.Key
 {
-    public class Shortcut : IShortcut
+    public class Shortcut<E> : IShortcut where E : struct, IComparable
     {
-        public Shortcut(Key key, KeyModifier keyModifier)
+        public Shortcut(Key<E> key, KeyModifier keyModifier)
         {
             Key = key;
             KeyModifier = keyModifier;
+            BaseModifiers = KeyModifiers.Where(mod => (mod & KeyModifier) != 0).ToArray();
         }
 
         private static KeyModifier[] KeyModifiers { get; } = new KeyModifier[] { KeyModifier.Ctrl, KeyModifier.Win, KeyModifier.Alt, KeyModifier.Shift };
+
+        public KeyModifier[] BaseModifiers { get; }
 
         private string KeyModifierString
             => string.Join
             (
                 "",
-                KeyModifiers
-                    .Where(mod => (mod & KeyModifier) != 0)
+                BaseModifiers
                     .Select(mod => string.Format("{0}+", Enum.GetName(typeof(KeyModifier), mod)))
             );
 
         public string Name => string.Format("{0}{1}", KeyModifierString, Key.Name);
 
-        public Key Key { get; }
+        public Key<E> Key { get; }
 
         public KeyModifier KeyModifier { get; set; }
 

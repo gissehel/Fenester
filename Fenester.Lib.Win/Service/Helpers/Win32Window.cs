@@ -408,7 +408,7 @@ namespace Fenester.Lib.Win.Service.Helpers
             while ((timeout == TimeSpan.Zero || remaining > TimeSpan.Zero) && (shouldContinue == null || shouldContinue()))
             {
                 Tracable.LogLine("while : remaining = [{0}]", remaining.TotalMilliseconds);
-                if (Win32.MsgWaitForMultipleObjectsEx(0, new IntPtr[] { }, remaining.ToUIntMilliseconds(), QS.ALLEVENTS, MWMO.INPUTAVAILABLE) == WAIT.OBJECT_0)
+                if (Win32.MsgWaitForMultipleObjectsEx(0, new IntPtr[] { }, remaining.ToUIntMilliseconds(), QS.ALLEVENTS, MWMO.WAITALL) == WAIT.OBJECT_0)
                 {
                     Tracable.LogLine("MsgWaitForMultipleObjectsEx");
                     while (Win32.PeekMessage(out Message message, handle, 0, 0, PM.REMOVE))

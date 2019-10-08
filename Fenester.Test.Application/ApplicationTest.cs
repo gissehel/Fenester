@@ -8,6 +8,7 @@ using Fenester.Lib.Graphical.Domain.Graphical;
 using Fenester.Lib.Graphical.Service;
 using Fenester.Lib.Test.Tools.Win;
 using Fenester.Lib.Win.Domain.Os;
+using Fenester.Lib.Win.Enums;
 using Fenester.Lib.Win.Service;
 using Fenester.Lib.Win.Service.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -26,7 +27,7 @@ namespace Fenester.Test.Application
 
         protected override void CreateServices()
         {
-            RunServiceImpl = new RunService();
+            RunServiceImpl = new RunService(RunWindowStrategy.WinForms);
             KeyServiceImpl = new KeyService(RunServiceImpl);
             RectangleServiceImpl = new RectangleService();
             WindowOsServiceImpl = new WindowOsService();

@@ -3,6 +3,7 @@ using Fenester.Lib.Core.Domain.Key;
 using Fenester.Lib.Core.Enums;
 using Fenester.Lib.Core.Service;
 using Fenester.Lib.Test.Tools.Win;
+using Fenester.Lib.Win.Enums;
 using Fenester.Lib.Win.Service;
 using Fenester.Lib.Win.Service.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,11 +17,12 @@ namespace Fenester.Lib.Win.Test
     public class KeyServiceTest : DebuggableTest<KeyService, IKeyService>
     {
         private RunService RunServiceImpl { get; set; }
+        public IRunServiceWin RunServiceWin => RunServiceImpl;
         private IRunService RunService => RunServiceImpl;
 
         protected override void CreateServices()
         {
-            RunServiceImpl = new RunService();
+            RunServiceImpl = new RunService(RunWindowStrategy.WinForms);
             ServiceImpl = new KeyService(RunServiceImpl);
         }
 

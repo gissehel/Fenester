@@ -1,19 +1,19 @@
 ﻿using Fenester.Lib.Core.Domain.Key;
-using Fenester.Lib.Win.Service.Helpers;
+using System;
 
 namespace Fenester.Lib.Win.Domain.Key
 {
-    public class Key : IKey
+    public class Key<E> : IKey where E : struct, IComparable
     {
-        public Key(Keys keys)
+        public Key(E e)
         {
-            Keys = keys;
+            Value = e;
 
-            Name = keys.ToString();
+            Name = e.ToString();
         }
 
         public string Name { get; private set; }
 
-        public Keys Keys { get; }
+        public E Value { get; }
     }
 }

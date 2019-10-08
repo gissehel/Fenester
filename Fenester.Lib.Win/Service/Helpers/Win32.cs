@@ -254,6 +254,12 @@ namespace Fenester.Lib.Win.Service.Helpers
         [DllImport("user32.dll")]
         public static extern int GetRawInputData(IntPtr handleRawInput, RawInputCommand command, out RawInput rawInput, ref int size, int sizeHeader);
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr LoadLibrary(string fileName);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern IntPtr GetModuleHandle(string moduleName);
+
         #endregion RawInput
 
         #region Errors

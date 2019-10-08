@@ -48,6 +48,7 @@
     <Compile Include="Domain\Os\Screen.cs" />
     <Compile Include="Domain\Os\Window.cs" />
     <Compile Include="Domain\Os\WindowId.cs" />
+    <Compile Include="Enums\RunWindowStrategy.cs" />
     <Compile Include="Enums\UserMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\ConvertHelper.cs" />
