@@ -56,7 +56,8 @@
     <Compile Include="Helpers\IntPtrComparer.cs" />
     <Compile Include="KeyServiceHookTest.cs" />
     <Compile Include="KeyServiceRawInputTest.cs" />
-    <Compile Include="KeyServiceTest.cs" />
+    <Compile Include="KeyServiceHotKeyTest.cs" />
+    <Compile Include="KeyServiceTestBase.cs" />
     <Compile Include="ScreenOsServiceTest.cs" />
     <Compile Include="Win32MonitorTest.cs" />
     <Compile Include="Win32WindowTest.cs" />

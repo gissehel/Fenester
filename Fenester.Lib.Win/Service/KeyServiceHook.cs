@@ -1,79 +1,18 @@
-﻿using Fenester.Lib.Core.Domain.Fenester;
-using Fenester.Lib.Core.Domain.Key;
-using Fenester.Lib.Core.Enums;
-using Fenester.Lib.Core.Service;
-using Fenester.Lib.Win.Domain.Key;
+﻿using Fenester.Lib.Core.Service;
 using Fenester.Lib.Win.Service.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
 namespace Fenester.Lib.Win.Service
 {
-    public class KeyServiceHook : IKeyService, ITracable
+    public class KeyServiceHook : KeyServiceBase<Keys>
     {
         public KeyServiceHook()
         {
         }
 
-        private List<Key<Keys>> Keys { get; set; } = Enum
-            .GetValues(typeof(Keys))
-            .Cast<Keys>()
-            .Select(keys => new Key<Keys>(keys))
-            .ToList()
-        ;
-
-        public Action<string> OnLogLine { get; set; }
-
-        public IEnumerable<IKey> GetKeys() => Keys.Cast<IKey>();
-
-        public IShortcut GetShortcut(IKey iKey, KeyModifier keyModifier)
-        {
-            if (iKey is Key<Keys> key)
-            {
-                return new Shortcut<Keys>(key, keyModifier);
-            }
-            return null;
-        }
-
-        private int NextIdToRegister { get; set; } = 1;
-        private Dictionary<int, RegisteredShortcut<Keys>> RegisteredShortcuts { get; } = new Dictionary<int, RegisteredShortcut<Keys>>();
-
-        public IRegisteredShortcut RegisterShortcut(IShortcut iShortcut, IOperation operation)
-        {
-            if (iShortcut is Shortcut<Keys> shortcut)
-            {
-                try
-                {
-                    int id = NextIdToRegister;
-                    NextIdToRegister += 1;
-                    this.LogLine("RegisterHotKey/Hook({0}, {1}, {2})", id, operation.Name, shortcut.Name);
-                    var registeredShortcut = new RegisteredShortcut<Keys>(shortcut, operation, id);
-                    RegisteredShortcuts[id] = registeredShortcut;
-                    return registeredShortcut;
-                }
-                catch
-                {
-                }
-            }
-            return null;
-        }
-
-        public void UnregisterShortcut(IRegisteredShortcut iRegisteredShortcut)
-        {
-            if (iRegisteredShortcut is RegisteredShortcut<Keys> registeredShortcut)
-            {
-                var id = registeredShortcut.Id;
-                if (RegisteredShortcuts.ContainsKey(id))
-                {
-                    RegisteredShortcuts.Remove(id);
-                }
-                this.LogLine("UnregisterHotKey/Hook({0})", id);
-            }
-        }
-
-        public void Init()
+        public override void Init()
         {
             this.LogLine("KeyServiceHook.Init()");
 
@@ -93,6 +32,7 @@ namespace Fenester.Lib.Win.Service
         }
 
         private HookProc hookProc = null;
+        private IntPtr HandleHook { get; set; }
 
         private void InstallHook(IntPtr handleInstance)
         {
@@ -109,8 +49,6 @@ namespace Fenester.Lib.Win.Service
             }
         }
 
-        private IntPtr HandleHook { get; set; }
-
         public IntPtr OnKeyboard(int code, IntPtr wParam, IntPtr lParam)
         {
             this.LogLine("OnKeyboard({0}, {1}, {2})", code, wParam.ToInt32(), lParam.ToInt32());
@@ -118,7 +56,7 @@ namespace Fenester.Lib.Win.Service
             return Win32.CallNextHookEx(HandleHook, code, wParam, lParam);
         }
 
-        public void Uninit()
+        public override void Uninit()
         {
             this.LogLine("KeyServiceHook.Uninit()");
             foreach (var registeredShortcut in RegisteredShortcuts.Values.ToList())

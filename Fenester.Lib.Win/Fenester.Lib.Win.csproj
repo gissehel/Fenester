@@ -91,8 +91,9 @@
     <Compile Include="Service\Helpers\Enums\WS.cs" />
     <Compile Include="Service\IMessageProcessor.cs" />
     <Compile Include="Service\IRunServiceWin.cs" />
-    <Compile Include="Service\KeyService.cs" />
+    <Compile Include="Service\KeyServiceHotKey.cs" />
     <Compile Include="Service\Helpers\Structs\Message.cs" />
+    <Compile Include="Service\KeyServiceBase.cs" />
     <Compile Include="Service\KeyServiceHook.cs" />
     <Compile Include="Service\KeyServiceRawInput.cs" />
     <Compile Include="Service\RunService.cs" />

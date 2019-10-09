@@ -28,7 +28,7 @@ namespace Fenester.Test.Application
         protected override void CreateServices()
         {
             RunServiceImpl = new RunService(RunWindowStrategy.WinForms);
-            KeyServiceImpl = new KeyService(RunServiceImpl);
+            KeyServiceImpl = new KeyServiceHotKey(RunServiceImpl);
             RectangleServiceImpl = new RectangleService();
             WindowOsServiceImpl = new WindowOsService();
             WindowRepositoryImpl = new WindowRepository(new WindowId.WindowIdEqualityComparer());
@@ -66,7 +66,7 @@ namespace Fenester.Test.Application
         public RunService RunServiceImpl { get; set; }
         public IRunService RunService => RunServiceImpl;
 
-        public KeyService KeyServiceImpl { get; set; }
+        public KeyServiceHotKey KeyServiceImpl { get; set; }
         public IKeyService KeyService => KeyServiceImpl;
 
         public WindowOsService WindowOsServiceImpl { get; set; }

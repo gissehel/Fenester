@@ -1,6 +1,4 @@
-﻿using Fenester.Lib.Core.Domain.Fenester;
-using Fenester.Lib.Core.Domain.Key;
-using Fenester.Lib.Core.Enums;
+﻿using Fenester.Lib.Core.Enums;
 using Fenester.Lib.Core.Service;
 using Fenester.Lib.Win.Domain.Key;
 using Fenester.Lib.Win.Service.Helpers;
@@ -13,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace Fenester.Lib.Win.Service
 {
-    public class KeyServiceRawInput : IKeyService, IMessageProcessor, ITracable
+    public class KeyServiceRawInput : KeyServiceBase<VirtualKeys>, IMessageProcessor
     {
         private IRunServiceWin RunService { get; set; }
 
@@ -22,63 +20,7 @@ namespace Fenester.Lib.Win.Service
             RunService = runService;
         }
 
-        private List<Key<VirtualKeys>> Keys { get; set; } = Enum
-            .GetValues(typeof(VirtualKeys))
-            .Cast<VirtualKeys>()
-            .Select(e => new Key<VirtualKeys>(e))
-            .ToList()
-        ;
-
-        public Action<string> OnLogLine { get; set; }
-
-        public IEnumerable<IKey> GetKeys() => Keys.Cast<IKey>();
-
-        public IShortcut GetShortcut(IKey iKey, KeyModifier keyModifier)
-        {
-            if (iKey is Key<VirtualKeys> key)
-            {
-                return new Shortcut<VirtualKeys>(key, keyModifier);
-            }
-            return null;
-        }
-
-        private int NextIdToRegister { get; set; } = 1;
-        private Dictionary<int, RegisteredShortcut<VirtualKeys>> RegisteredShortcuts { get; } = new Dictionary<int, RegisteredShortcut<VirtualKeys>>();
-
-        public IRegisteredShortcut RegisterShortcut(IShortcut iShortcut, IOperation operation)
-        {
-            if (iShortcut is Shortcut<VirtualKeys> shortcut)
-            {
-                try
-                {
-                    int id = NextIdToRegister;
-                    NextIdToRegister += 1;
-                    this.LogLine("RegisterHotKey/RawInput({0}, {1}, {2})", id, operation.Name, shortcut.Name);
-                    var registeredShortcut = new RegisteredShortcut<VirtualKeys>(shortcut, operation, id);
-                    RegisteredShortcuts[id] = registeredShortcut;
-                    return registeredShortcut;
-                }
-                catch
-                {
-                }
-            }
-            return null;
-        }
-
-        public void UnregisterShortcut(IRegisteredShortcut iRegisteredShortcut)
-        {
-            if (iRegisteredShortcut is RegisteredShortcut<VirtualKeys> registeredShortcut)
-            {
-                var id = registeredShortcut.Id;
-                if (RegisteredShortcuts.ContainsKey(id))
-                {
-                    RegisteredShortcuts.Remove(id);
-                }
-                this.LogLine("UnregisterHotKey/RawInput({0})", id);
-            }
-        }
-
-        public void Init()
+        public override void Init()
         {
             this.LogLine("KeyServiceRawInput.Init()");
 
@@ -117,7 +59,7 @@ namespace Fenester.Lib.Win.Service
             return Win32.CallNextHookEx(HandleHook, code, wParam, lParam);
         }
 
-        public void Uninit()
+        public override void Uninit()
         {
             this.LogLine("KeyServiceRawInput.Uninit()");
             foreach (var registeredShortcut in RegisteredShortcuts.Values.ToList())
@@ -206,8 +148,7 @@ namespace Fenester.Lib.Win.Service
             {
                 if (KeyPressedMatchShortcut(registeredShortcut.Shortcut))
                 {
-                    this.LogLine("  Executing action [{0}] due to shortcut [{1}] registered as [{2}]", registeredShortcut.Operation.Name, registeredShortcut.Shortcut.Name, registeredShortcut.Id);
-                    registeredShortcut.Operation.Action();
+                    ExecuteRegisteredShortcut(registeredShortcut);
                 }
             }
         }

@@ -14,24 +14,11 @@ using System.Linq;
 namespace Fenester.Lib.Win.Test
 {
     [TestClass]
-    public class KeyServiceTest : DebuggableTest<KeyService, IKeyService>
+    public abstract class KeyServiceTestBase<T> : DebuggableTest<T, IKeyService> where T : IKeyService, ITracable
     {
-        private RunService RunServiceImpl { get; set; }
+        public RunService RunServiceImpl { get; set; }
         public IRunServiceWin RunServiceWin => RunServiceImpl;
-        private IRunService RunService => RunServiceImpl;
-
-        protected override void CreateServices()
-        {
-            RunServiceImpl = new RunService(RunWindowStrategy.WinForms);
-            ServiceImpl = new KeyService(RunServiceImpl);
-        }
-
-        protected override InitializableExpressions GetInitializableExpressions
-            => new InitializableExpressions
-            {
-                () => RunServiceImpl,
-                () => ServiceImpl,
-            };
+        public IRunService RunService => RunServiceImpl;
 
         protected override void InitTraces()
         {
@@ -43,14 +30,38 @@ namespace Fenester.Lib.Win.Test
             Win32Window.Tracable = null;
         }
 
-        protected override IEnumerable<ITracable> Tracables => new List<ITracable> { RunServiceImpl, ServiceImpl };
+        protected abstract T CreateMainService();
+
+        protected override void CreateServices()
+        {
+            RunServiceImpl = new RunService(RunWindowStrategy.WinForms);
+            ServiceImpl = CreateMainService();
+        }
+
+        protected override InitializableExpressions GetInitializableExpressions
+            => new InitializableExpressions
+            {
+                () => RunServiceImpl,
+                () => ServiceImpl,
+            };
+
+        protected override IEnumerable<ITracable> Tracables => new List<ITracable>
+        {
+            RunServiceImpl,
+            ServiceImpl,
+        };
 
         public IKey GetTestKey(string name) => Service.GetKeys().Where(k => k.Name == name).FirstOrDefault();
 
         [TestMethod]
         public void RegisterShortcutTest()
         {
-            TraceFile.SetName("RegisterShortcutTest");
+            TraceFile.SetName(string.Format("{0}-RegisterShortcutTest", GetType().Name));
+            RunServiceWin.AddFuncMessageProcessor((message) =>
+            {
+                this.LogLine("  Message : {0} - {1} - {2} - {3}", message.handle.ToRepr(), message.message.ToRepr(), message.wParam.ToString(), message.lParam.ToString());
+                return IntPtr.Zero;
+            });
             int count = 0;
             var shortcut = Service.GetShortcut(GetTestKey("N"), KeyModifier.Alt);
             var operation = new Operation("Test", () =>
@@ -62,6 +73,9 @@ namespace Fenester.Lib.Win.Test
             var registeredShortcut = Service.RegisterShortcut(shortcut, operation);
             this.LogLine("Stop main call");
 
+            Win32.PostMessage(RunServiceWin.Handle, WM.USER + 2, 0, 0);
+            Win32.PostMessage(RunServiceWin.Handle, WM.USER + 5, 0, 0);
+            Win32.PostMessage(RunServiceWin.Handle, WM.USER + 7, 0, 0);
             RunService.RunFor(new TimeSpan(0, 0, 10));
             Assert.AreEqual(1, count);
         }
@@ -69,7 +83,7 @@ namespace Fenester.Lib.Win.Test
         [TestMethod]
         public void RegisterShortcutTestNoTimeout()
         {
-            TraceFile.SetName("RegisterShortcutTest");
+            TraceFile.SetName(string.Format("{0}-RegisterShortcutTestNoTimeout", GetType().Name));
             int count = 0;
             var shortcutN = Service.GetShortcut(GetTestKey("N"), KeyModifier.Alt);
             var shortcutS = Service.GetShortcut(GetTestKey("S"), KeyModifier.Alt);
