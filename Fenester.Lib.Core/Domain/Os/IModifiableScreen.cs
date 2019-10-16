@@ -2,12 +2,12 @@
 
 namespace Fenester.Lib.Core.Domain.Os
 {
-    public interface IModifiableScreen
+    public interface IModifiableScreen : IScreen
     {
-        IRectangle Rectangle { get; set; }
+        new IRectangle Rectangle { get; set; }
 
-        int Index { get; set; }
+        new int Index { get; set; }
 
-        void UpdateFrom(IScreen window);
+        void UpdateFrom(IScreen screen);
     }
 }

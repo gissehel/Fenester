@@ -12,7 +12,7 @@ using System.Threading;
 namespace Fenester.Lib.Win.Test
 {
     [TestClass]
-    public class WindowOsServiceTest : DebuggableTest<WindowOsService, IWindowOsService>
+    public class WindowOsServiceTest : DebuggableTest<WindowOsService, IWindowOsServiceSync>
     {
         protected override IEnumerable<ITracable> Tracables => base.Tracables;
 
@@ -21,7 +21,7 @@ namespace Fenester.Lib.Win.Test
         {
             TraceFile.SetName("GetWindowsSyncTest");
 
-            var windows = ServiceImpl.GetWindowsSync();
+            var windows = Service.GetWindowsSync();
 
             foreach (var window in windows)
             {
@@ -37,7 +37,7 @@ namespace Fenester.Lib.Win.Test
         }
 
         private IEnumerable<IWindow> GetTestForms()
-            => ServiceImpl
+            => Service
                 .GetWindowsSync()
                 .Where(window => window.Class == "TFormMain")
             ;
@@ -67,8 +67,8 @@ namespace Fenester.Lib.Win.Test
             TraceFile.SetName("HideSyncTest");
 
             var window = GetTestForms().First();
-            Assert.IsNotNull(ServiceImpl.HideSync(window));
-            ServiceImpl.UnmanageSync(window);
+            Assert.IsNotNull(Service.HideSync(window));
+            Service.UnmanageSync(window);
         }
 
         [TestMethod]
@@ -77,8 +77,8 @@ namespace Fenester.Lib.Win.Test
             TraceFile.SetName("ShowSyncTest");
 
             var window = GetTestForms().First();
-            Assert.IsNotNull(ServiceImpl.ShowSync(window));
-            ServiceImpl.UnmanageSync(window);
+            Assert.IsNotNull(Service.ShowSync(window));
+            Service.UnmanageSync(window);
         }
 
         [TestMethod]
@@ -87,10 +87,10 @@ namespace Fenester.Lib.Win.Test
             TraceFile.SetName("MoveSyncTest");
 
             var window = GetTestForms().First();
-            Assert.IsNotNull(ServiceImpl.MoveSync(window, new Rectangle(800, 600, 2000, 200)));
-            ServiceImpl.FocusWindowSync(window);
+            Assert.IsNotNull(Service.MoveSync(window, new Rectangle(800, 600, 2000, 200)));
+            Service.FocusWindowSync(window);
             Thread.Sleep(5000);
-            ServiceImpl.UnmanageSync(window);
+            Service.UnmanageSync(window);
         }
 
         protected override void CreateServices()

@@ -12,7 +12,10 @@ namespace Fenester.Lib.Core.Service
         {
             if (tracable?.OnLogLine == null)
             {
-                DefaultOnLogLine(line);
+                if (Activated)
+                {
+                    DefaultOnLogLine(line);
+                }
             }
             else
             {

@@ -11,5 +11,7 @@ namespace Fenester.Lib.Core.Service
         Task<IDesktop> GetPrev(IDesktop desktop);
 
         Task<IDesktop> GetNext(IDesktop desktop);
+
+        Task<IDesktop> GetById(string id);
     }
 }

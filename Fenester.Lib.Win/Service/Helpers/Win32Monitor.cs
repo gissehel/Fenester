@@ -17,7 +17,7 @@ namespace Fenester.Lib.Win.Service.Helpers
                 (
                     IntPtr.Zero,
                     IntPtr.Zero,
-                    (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData) =>
+                    (IntPtr handleMonitor, IntPtr hdcMonitor, ref Rect rectangleMonitor, IntPtr dwData) =>
                     {
                         id++;
                         var screen = new Screen
@@ -25,7 +25,7 @@ namespace Fenester.Lib.Win.Service.Helpers
                             Index = id,
                             Id = string.Format("Screen_{0}", id),
                             Name = string.Format("Screen {0}", id),
-                            Rectangle = lprcMonitor.GetRectangleFromRect()
+                            Rectangle = rectangleMonitor.GetRectangleFromRect()
                         };
                         result.Add(screen);
                         return true;

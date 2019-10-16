@@ -49,8 +49,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationTest.cs" />
+    <Compile Include="ApplicationWinTest.cs" />
+    <Compile Include="FenesterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TaskHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -71,6 +73,10 @@
     <ProjectReference Include="..\Fenester.Lib.Win\Fenester.Lib.Win.csproj">
       <Project>{ab455a7b-34e3-49b2-b945-f522d94fdebe}</Project>
       <Name>Fenester.Lib.Win</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fenester.Test.Mock\Fenester.Test.Mock.csproj">
+      <Project>{FFE3C49C-F5E9-45F8-B95A-E74D536F8B40}</Project>
+      <Name>Fenester.Test.Mock</Name>
     </ProjectReference>
     <ProjectReference Include="..\Fenester.Test.Tools.Win\Fenester.Test.Tools.Win.csproj">
       <Project>{6e32754b-2501-47a1-b0d3-01044a7194ea}</Project>

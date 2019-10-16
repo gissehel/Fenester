@@ -7,7 +7,7 @@ namespace Fenester.Lib.Core.Service
 {
     public interface IWindowOsService : IInitializable
     {
-        Task<IEnumerable<IWindow>> GetWindows();
+        Task<IEnumerable<IInternalWindow>> GetWindows();
 
         Task<IWindow> UpdateCurrentPosition(IWindow iWindow);
 

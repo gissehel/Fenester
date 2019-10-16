@@ -64,7 +64,7 @@ namespace Fenester.Lib.Win.Service
 
         public static string ToEnumName<T>(this T self) where T : struct, IConvertible => Enum.GetName(typeof(T), self);
 
-        public static string ToRepr<T>(this T self) where T : struct, IConvertible => string.Format("({0}) [{1}]", self.ToLong(), self.ToEnumName());
+        public static string ToRepr<T>(this T self) where T : struct, IConvertible => string.Format("({0}/0x{0:x}) [{1}]", self.ToLong(), self.ToEnumName());
 
         public static string ToRepr(this IntPtr self) => string.Format("[0x{0:x16}]", self.ToInt64());
 
@@ -81,10 +81,7 @@ namespace Fenester.Lib.Win.Service
             return new Rectangle(width, height, left, top);
         }
 
-        public static int ToInt32(this IntPtr intPtr)
-        {
-            return unchecked((int)intPtr.ToInt64());
-        }
+        public static int ToInt32(this IntPtr intPtr) => unchecked((int)intPtr.ToInt64());
 
         public static string ToRepr(this bool self) => self ? "true" : "false";
     }

@@ -3,7 +3,7 @@ using Fenester.Lib.Core.Enums;
 
 namespace Fenester.Lib.Core.Domain.Os
 {
-    public interface IModifiableWindow
+    public interface IModifiableWindow : IWindow
     {
         string Title { get; set; }
 

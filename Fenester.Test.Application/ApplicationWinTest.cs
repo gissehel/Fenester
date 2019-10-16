@@ -19,7 +19,7 @@ using System.Linq;
 namespace Fenester.Test.Application
 {
     [TestClass]
-    public class ApplicationTest : DebuggableTest
+    public class ApplicationWinTest : DebuggableTest
     {
         #region DebuggableTest overrides
 

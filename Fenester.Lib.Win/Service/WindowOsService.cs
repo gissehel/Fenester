@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Fenester.Lib.Win.Service
 {
-    public class WindowOsService : IWindowOsService, ITracable
+    public class WindowOsService : IWindowOsService, IWindowOsServiceSync, ITracable
     {
         public Action<string> OnLogLine { get; set; }
 
@@ -22,7 +22,7 @@ namespace Fenester.Lib.Win.Service
 
         public Task<IWindow> UpdateCurrentPosition(IWindow window) => Task.Run(() => UpdateCurrentPositionSync(window));
 
-        public Task<IEnumerable<IWindow>> GetWindows() => Task.Run(() => GetWindowsSync());
+        public Task<IEnumerable<IInternalWindow>> GetWindows() => Task.Run(() => GetWindowsSync());
 
         public Task<IWindow> Show(IWindow window) => Task.Run(() => ShowSync(window));
 
@@ -85,7 +85,7 @@ namespace Fenester.Lib.Win.Service
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IWindow> GetWindowsSync()
+        public IEnumerable<IInternalWindow> GetWindowsSync()
         {
             return Win32Window.GetOpenWindows().Values.OrderBy((window) => window.Handle.ToInt64());
         }

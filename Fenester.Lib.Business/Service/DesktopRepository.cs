@@ -9,13 +9,24 @@ namespace Fenester.Lib.Business.Service
     public class DesktopRepository : IDesktopRepository
     {
         private List<IDesktop> Desktops { get; }
+        private Dictionary<string, IDesktop> DesktopsByName { get; } = new Dictionary<string, IDesktop>();
+
+        private void Add(Desktop desktop)
+        {
+            Desktops.Add(desktop);
+            if (DesktopsByName.ContainsKey(desktop.Id))
+            {
+                Desktops.Remove(DesktopsByName[desktop.Id]);
+            }
+            DesktopsByName[desktop.Id] = desktop;
+        }
 
         public DesktopRepository()
         {
             Desktops = new List<IDesktop>();
             for (int index = 1; index <= 10; index++)
             {
-                Desktops.Add(new Desktop(index));
+                Add(new Desktop(index));
             }
         }
 
@@ -46,6 +57,16 @@ namespace Fenester.Lib.Business.Service
                 index = index % Desktops.Count;
             }
             return Task.FromResult(Desktops[index]);
+        }
+
+        public Task<IDesktop> GetById(string id)
+        {
+            IDesktop desktop = null;
+            if (DesktopsByName.ContainsKey(id))
+            {
+                desktop = DesktopsByName[id];
+            }
+            return Task.FromResult(desktop);
         }
 
         public void Init()

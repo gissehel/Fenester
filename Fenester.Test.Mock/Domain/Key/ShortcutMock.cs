@@ -3,11 +3,11 @@ using Fenester.Lib.Core.Enums;
 using System;
 using System.Linq;
 
-namespace Fenester.Lib.Win.Domain.Key
+namespace Fenester.Test.Mock.Domain.Key
 {
-    public class Shortcut<E> : IShortcut where E : struct, IComparable
+    public class ShortcutMock : IShortcut
     {
-        public Shortcut(Key<E> key, KeyModifier keyModifier)
+        public ShortcutMock(KeyMock key, KeyModifier keyModifier)
         {
             Key = key;
             KeyModifier = keyModifier;
@@ -27,11 +27,10 @@ namespace Fenester.Lib.Win.Domain.Key
 
         public string Name => string.Format("{0}{1}", KeyModifierString, Key.Name);
 
-        public Key<E> Key { get; }
+        public KeyMock Key { get; }
+        IKey IShortcut.Key => Key;
 
         public KeyModifier KeyModifier { get; set; }
-
-        IKey IShortcut.Key => Key;
 
         private void SetKeyModifier(bool value, KeyModifier keyModifier)
         {
