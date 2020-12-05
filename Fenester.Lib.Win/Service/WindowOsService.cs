@@ -20,19 +20,26 @@ namespace Fenester.Lib.Win.Service
 
         #region Async
 
-        public Task<IWindow> UpdateCurrentPosition(IWindow window) => Task.Run(() => UpdateCurrentPositionSync(window));
+        private async Task<T> RunAsync<T>(Func<T> func)
+        {
+            await Task.Delay(0);
+            return func();
+            // return Task.Run<T>(() => func());
+        }
 
-        public Task<IEnumerable<IInternalWindow>> GetWindows() => Task.Run(() => GetWindowsSync());
+        public Task<IWindow> UpdateCurrentPosition(IWindow window) => RunAsync(() => UpdateCurrentPositionSync(window));
 
-        public Task<IWindow> Show(IWindow window) => Task.Run(() => ShowSync(window));
+        public Task<IEnumerable<IInternalWindow>> GetWindows() => RunAsync(() => GetWindowsSync());
 
-        public Task<IWindow> Hide(IWindow window) => Task.Run(() => HideSync(window));
+        public Task<IWindow> Show(IWindow window) => RunAsync(() => ShowSync(window));
 
-        public Task<IWindow> Move(IWindow iWindow, IRectangle rectangle) => Task.Run(() => MoveSync(iWindow, rectangle));
+        public Task<IWindow> Hide(IWindow window) => RunAsync(() => HideSync(window));
 
-        public Task<IWindow> FocusWindow(IWindow iWindow) => Task.Run(() => FocusWindowSync(iWindow));
+        public Task<IWindow> Move(IWindow iWindow, IRectangle rectangle) => RunAsync(() => MoveSync(iWindow, rectangle));
 
-        public Task<IWindow> Unmanage(IWindow iWindow) => Task.Run(() => UnmanageSync(iWindow));
+        public Task<IWindow> FocusWindow(IWindow iWindow) => RunAsync(() => FocusWindowSync(iWindow));
+
+        public Task<IWindow> Unmanage(IWindow iWindow) => RunAsync(() => UnmanageSync(iWindow));
 
         #endregion Async
 
@@ -82,7 +89,6 @@ namespace Fenester.Lib.Win.Service
                 }
             }
             return null;
-            throw new NotImplementedException();
         }
 
         public IEnumerable<IInternalWindow> GetWindowsSync()

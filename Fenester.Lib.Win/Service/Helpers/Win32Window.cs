@@ -321,9 +321,16 @@ namespace Fenester.Lib.Win.Service.Helpers
             Win32.DrawMenuBar(handle);
         }
 
+        private static WindowProc WindowProc;
+        private static WindowClassEx WindowClassEx;
+        private static IntPtr HandleWindow = IntPtr.Zero;
         public static IntPtr CreateWindow(Func<Message, IntPtr> processMessage, string className, string title = null)
         {
-            var windowProc = new WindowProc((IntPtr handleWindow, WM wm, IntPtr wParam, IntPtr lParam) =>
+            if (HandleWindow != IntPtr.Zero)
+            {
+                return HandleWindow;
+            }
+            WindowProc = new WindowProc((IntPtr handleWindow, WM wm, IntPtr wParam, IntPtr lParam) =>
             {
                 IntPtr result = IntPtr.Zero;
                 if (processMessage != null)
@@ -347,11 +354,11 @@ namespace Fenester.Lib.Win.Service.Helpers
                 }
             });
 
-            var windowClassEx = new WindowClassEx()
+            WindowClassEx = new WindowClassEx()
             {
                 size = Marshal.SizeOf(typeof(WindowClassEx)),
                 style = CS.HREDRAW | CS.VREDRAW,
-                windowProc = Marshal.GetFunctionPointerForDelegate(windowProc),
+                windowProc = Marshal.GetFunctionPointerForDelegate(WindowProc),
                 classExtra = 0,
                 windowExtra = 0,
                 handleInstance = IntPtr.Zero,
@@ -363,9 +370,9 @@ namespace Fenester.Lib.Win.Service.Helpers
                 handleIconSm = IntPtr.Zero,
             };
 
-            Tracable.LogLine("windowClassEx {0}", windowClassEx.ToString());
+            Tracable.LogLine("windowClassEx {0}", WindowClassEx.ToString());
 
-            var registeredClassEx = Win32.RegisterClassEx(ref windowClassEx);
+            var registeredClassEx = Win32.RegisterClassEx(ref WindowClassEx);
             Tracable.LogLine("registeredClassEx {0}", registeredClassEx.ToString());
             if (registeredClassEx == 0)
             {
@@ -375,11 +382,11 @@ namespace Fenester.Lib.Win.Service.Helpers
                 return IntPtr.Zero;
             }
 
-            var handle = Win32.CreateWindowEx
+            HandleWindow = Win32.CreateWindowEx
                 (
                     WS_EX.NONE,
                     registeredClassEx,
-                    title ?? windowClassEx.className,
+                    title ?? WindowClassEx.className,
                     WS.NONE,
                     0,
                     0,
@@ -387,17 +394,17 @@ namespace Fenester.Lib.Win.Service.Helpers
                     0,
                     IntPtr.Zero,
                     IntPtr.Zero,
-                    windowClassEx.handleInstance,
+                    WindowClassEx.handleInstance,
                     IntPtr.Zero
                 );
-            Tracable.LogLine("handle {0}", handle.ToRepr());
+            Tracable.LogLine("handle {0}", HandleWindow.ToRepr());
 
-            if (handle == null)
+            if (HandleWindow == null)
             {
                 var error = Win32.GetLastError();
                 Tracable.LogLine("error {0}", error.ToRepr());
             }
-            return handle;
+            return HandleWindow;
         }
 
         public static void ListenMessages(IntPtr handle, TimeSpan timeout, Func<Message, IntPtr> onMessage, Func<bool> shouldContinue)
@@ -415,8 +422,11 @@ namespace Fenester.Lib.Win.Service.Helpers
                     {
                         Tracable.LogLine("PeekMessage => {0}", message.message.ToRepr());
                         var result = onMessage(message);
-                        Win32.TranslateMessage(ref message);
-                        Win32.DispatchMessage(ref message);
+                        if (result == null)
+                        {
+                            Win32.TranslateMessage(ref message);
+                            Win32.DispatchMessage(ref message);
+                        }
                     }
                 }
                 remaining = timeout - (DateTime.Now - start);

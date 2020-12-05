@@ -50,7 +50,7 @@ namespace Fenester.Exe.InteractiveTest
             KeyService.Impl = new KeyServiceRawInput(RunService.Use);
             WindowOsService.Impl = new WindowOsService();
             ScreenOsService.Impl = new ScreenOsService();
-            Win32Window.Tracable = this; 
+            // Win32Window.Tracable = this; 
 
             AddComponent(RunService.Use);
             AddComponent(KeyService.Use);
