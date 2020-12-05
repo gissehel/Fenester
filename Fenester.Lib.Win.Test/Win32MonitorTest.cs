@@ -8,12 +8,12 @@ namespace Fenester.Lib.Win.Test
     [TestClass]
     public class Win32MonitorTest : DebuggableTest
     {
-        protected override void InitTraces()
+        protected override void InitTracesPost()
         {
             Win32Monitor.Tracable = this;
         }
 
-        protected override void UninitTraces()
+        protected override void UninitTracesPre()
         {
             Win32Monitor.Tracable = null;
         }

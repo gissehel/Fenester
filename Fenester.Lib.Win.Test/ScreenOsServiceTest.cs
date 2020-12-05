@@ -26,17 +26,18 @@ namespace Fenester.Lib.Win.Test
 
         #region DebuggableTest
 
-        protected override void CreateServices()
+        protected override void CreateComponents()
         {
             ServiceImpl = new ScreenOsService();
+            AddComponent(Service);
         }
 
-        protected override void InitTraces()
+        protected override void InitTracesPost()
         {
             Win32Monitor.Tracable = this;
         }
 
-        protected override void UninitTraces()
+        protected override void UninitTracesPre()
         {
             Win32Monitor.Tracable = null;
         }

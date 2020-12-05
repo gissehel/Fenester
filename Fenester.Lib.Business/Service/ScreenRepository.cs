@@ -11,6 +11,7 @@ namespace Fenester.Lib.Business.Service
     {
         private List<IInternalScreen> InternalScreens { get; }
         private Dictionary<string, IInternalScreen> InternalScreensById { get; }
+        public Action<string> OnLogLine { get; set; }
 
         public ScreenRepository()
         {

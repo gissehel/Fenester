@@ -5,7 +5,7 @@ using System;
 
 namespace Fenester.Lib.Graphical.Service
 {
-    public class RectangleService : IRectangleService, ITracable, IInitializable
+    public class RectangleService : IRectangleService
     {
         public Action<string> OnLogLine { get; set; }
 

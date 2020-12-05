@@ -11,6 +11,8 @@ namespace Fenester.Lib.Business.Service
         private List<IDesktop> Desktops { get; }
         private Dictionary<string, IDesktop> DesktopsByName { get; } = new Dictionary<string, IDesktop>();
 
+        public System.Action<string> OnLogLine { get; set; }
+
         private void Add(Desktop desktop)
         {
             Desktops.Add(desktop);

@@ -1,5 +1,6 @@
 ﻿using Fenester.Lib.Core.Domain.Os;
 using Fenester.Lib.Core.Service;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,6 +45,7 @@ namespace Fenester.Lib.Business.Service
         }
 
         public List<IInternalScreen> Screens { get; set; }
+        public Action<string> OnLogLine { get; set; }
 
         public void Start()
         {

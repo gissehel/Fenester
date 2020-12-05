@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Fenester.Lib.Core.Service
 {
-    public interface IWindowOsServiceSync : IInitializable
+    public interface IWindowOsServiceSync : IComponent
     {
         IEnumerable<IInternalWindow> GetWindowsSync();
 

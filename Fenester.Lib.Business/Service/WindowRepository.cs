@@ -1,5 +1,6 @@
 ﻿using Fenester.Lib.Core.Domain.Os;
 using Fenester.Lib.Core.Service;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,6 +8,8 @@ namespace Fenester.Lib.Business.Service
 {
     public class WindowRepository : IWindowRepository
     {
+        public Action<string> OnLogLine { get; set; }
+
         private IEqualityComparer<IWindowId> WindowIdEqualityComparer { get; }
 
         private IDictionary<IWindowId, IInternalWindow> WindowsById { get; }

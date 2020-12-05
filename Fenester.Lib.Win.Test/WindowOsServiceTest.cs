@@ -14,8 +14,6 @@ namespace Fenester.Lib.Win.Test
     [TestClass]
     public class WindowOsServiceTest : DebuggableTest<WindowOsService, IWindowOsServiceSync>
     {
-        protected override IEnumerable<ITracable> Tracables => base.Tracables;
-
         [TestMethod]
         public void GetWindowsSyncTest()
         {
@@ -93,17 +91,18 @@ namespace Fenester.Lib.Win.Test
             Service.UnmanageSync(window);
         }
 
-        protected override void CreateServices()
+        protected override void CreateComponents()
         {
             ServiceImpl = new WindowOsService();
+            AddComponent(Service);
         }
 
-        protected override void InitTraces()
+        protected override void InitTracesPost()
         {
             Win32Window.Tracable = this;
         }
 
-        protected override void UninitTraces()
+        protected override void UninitTracesPre()
         {
             Win32Window.Tracable = null;
         }

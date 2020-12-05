@@ -14,12 +14,12 @@ namespace Fenester.Lib.Win.Test
     [TestClass]
     public class Win32WindowTest : DebuggableTest
     {
-        protected override void InitTraces()
+        protected override void InitTracesPost()
         {
             Win32Window.Tracable = this;
         }
 
-        protected override void UninitTraces()
+        protected override void UninitTracesPre()
         {
             Win32Window.Tracable = null;
         }

@@ -64,7 +64,9 @@ namespace Fenester.Lib.Win.Service
 
         public static string ToEnumName<T>(this T self) where T : struct, IConvertible => Enum.GetName(typeof(T), self);
 
-        public static string ToRepr<T>(this T self) where T : struct, IConvertible => string.Format("({0}/0x{0:x}) [{1}]", self.ToLong(), self.ToEnumName());
+        public static string ToEnumTypeName<T>(this T self) where T : struct, IConvertible => typeof(T).Name;
+
+        public static string ToRepr<T>(this T self) where T : struct, IConvertible => string.Format("({2}:{0}/0x{0:x}) [{1}]", self.ToLong(), self.ToEnumName(), self.ToEnumTypeName());
 
         public static string ToRepr(this IntPtr self) => string.Format("[0x{0:x16}]", self.ToInt64());
 

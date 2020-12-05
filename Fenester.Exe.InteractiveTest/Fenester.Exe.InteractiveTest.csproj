@@ -4,15 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A3933001-65A1-4E6D-B9E6-90E751524C32}</ProjectGuid>
+    <ProjectGuid>{30FEA336-D3CB-497F-92FA-B900AF550FDC}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Fenester.Exe.Test</RootNamespace>
-    <AssemblyName>Fenester.Exe.Test</AssemblyName>
+    <RootNamespace>Fenester.Exe.InteractiveTest</RootNamespace>
+    <AssemblyName>Fenester.Exe.InteractiveTest</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Application.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -58,14 +58,6 @@
     <ProjectReference Include="..\Fenester.Lib.Core\Fenester.Lib.Core.csproj">
       <Project>{1a073dc6-cad8-4077-a780-394420ab1737}</Project>
       <Name>Fenester.Lib.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Fenester.Lib.Graphical\Fenester.Lib.Graphical.csproj">
-      <Project>{ec15d6e9-524e-4cef-9175-8a2fa0b5108d}</Project>
-      <Name>Fenester.Lib.Graphical</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Fenester.Lib.Win.Test\Fenester.Lib.Win.Test.csproj">
-      <Project>{25be9387-e497-4e26-9a42-44f1740b3b3c}</Project>
-      <Name>Fenester.Lib.Win.Test</Name>
     </ProjectReference>
     <ProjectReference Include="..\Fenester.Lib.Win\Fenester.Lib.Win.csproj">
       <Project>{ab455a7b-34e3-49b2-b945-f522d94fdebe}</Project>

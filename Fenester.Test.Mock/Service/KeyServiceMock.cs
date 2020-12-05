@@ -11,6 +11,8 @@ namespace Fenester.Test.Mock.Service
 {
     public class KeyServiceMock : IKeyService, IKeyEmitter, IKeyServiceMock, IKeyEmitterMock
     {
+        public Action<string> OnLogLine { get; set; }
+
         public KeyServiceMock()
         {
             Keys = new KeysMock();

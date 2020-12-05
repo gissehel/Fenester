@@ -8,4 +8,8 @@
     <ProjectReference Include="..\Fenester.Lib.Core\Fenester.Lib.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
+  </ItemGroup>
+
 </Project>

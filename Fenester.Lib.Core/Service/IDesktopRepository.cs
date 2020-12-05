@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Fenester.Lib.Core.Service
 {
-    public interface IDesktopRepository : IInitializable
+    public interface IDesktopRepository : IComponent
     {
         Task<IEnumerable<IDesktop>> GetDesktops();
 

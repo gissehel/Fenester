@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Fenester.Lib.Test.Tools.Win
+namespace Fenester.Lib.Core.Extension
 {
     public static class ReflexionExtension
     {

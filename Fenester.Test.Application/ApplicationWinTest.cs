@@ -2,6 +2,7 @@
 using Fenester.Lib.Business.Service;
 using Fenester.Lib.Core.Domain.Key;
 using Fenester.Lib.Core.Domain.Os;
+using Fenester.Lib.Core.Domain.Utils;
 using Fenester.Lib.Core.Enums;
 using Fenester.Lib.Core.Service;
 using Fenester.Lib.Graphical.Domain.Graphical;
@@ -23,9 +24,7 @@ namespace Fenester.Test.Application
     {
         #region DebuggableTest overrides
 
-        protected override IEnumerable<ITracable> Tracables => base.Tracables;
-
-        protected override void CreateServices()
+        protected override void CreateComponents()
         {
             RunServiceImpl = new RunService(RunWindowStrategy.WinForms);
             KeyServiceImpl = new KeyServiceHotKey(RunServiceImpl);
@@ -34,26 +33,23 @@ namespace Fenester.Test.Application
             WindowRepositoryImpl = new WindowRepository(new WindowId.WindowIdEqualityComparer());
             ScreenOsServiceImpl = new ScreenOsService();
             ScreenRepositoryImpl = new ScreenRepository();
+
+            AddComponent(RunService);
+            AddComponent(KeyService);
+            AddComponent(RectangleService);
+            AddComponent(WindowOsService);
+            AddComponent(WindowRepository);
+            AddComponent(ScreenOsService);
+            AddComponent(ScreenRepository);
         }
 
-        protected override InitializableExpressions GetInitializableExpressions => new InitializableExpressions()
-        {
-            ()=>RunServiceImpl,
-            ()=>KeyServiceImpl,
-            ()=>RectangleServiceImpl,
-            ()=>WindowOsServiceImpl,
-            ()=>WindowRepositoryImpl,
-            ()=>ScreenOsServiceImpl,
-            ()=>ScreenRepositoryImpl,
-        };
-
-        protected override void InitTraces()
+        protected override void InitTracesPost()
         {
             Win32Window.Tracable = this;
             Win32Monitor.Tracable = this;
         }
 
-        protected override void UninitTraces()
+        protected override void UninitTracesPre()
         {
             Win32Monitor.Tracable = this;
             Win32Window.Tracable = this;

@@ -5,17 +5,17 @@ namespace Fenester.Lib.Core.Domain.Os
 {
     public interface IModifiableWindow : IWindow
     {
-        string Title { get; set; }
+        new string Title { get; set; }
 
-        string Class { get; set; }
+        new string Class { get; set; }
 
-        IRectangle Rectangle { get; set; }
+        new IRectangle Rectangle { get; set; }
 
-        IRectangle RectangleCurrent { get; set; }
+        new IRectangle RectangleCurrent { get; set; }
 
-        Visibility OsVisibility { get; set; }
+        new Visibility OsVisibility { get; set; }
 
-        WindowCategory Category { get; set; }
+        new WindowCategory Category { get; set; }
 
         void UpdateFrom(IWindow window);
     }

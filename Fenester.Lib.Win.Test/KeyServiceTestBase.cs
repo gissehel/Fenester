@@ -8,7 +8,6 @@ using Fenester.Lib.Win.Service;
 using Fenester.Lib.Win.Service.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Fenester.Lib.Win.Test
@@ -20,38 +19,28 @@ namespace Fenester.Lib.Win.Test
         public IRunServiceWin RunServiceWin => RunServiceImpl;
         public IRunService RunService => RunServiceImpl;
 
-        protected override void InitTraces()
+        protected override void InitTracesPost()
         {
             Win32Window.Tracable = this;
         }
 
-        protected override void UninitTraces()
+        protected override void UninitTracesPre()
         {
             Win32Window.Tracable = null;
         }
 
         protected abstract T CreateMainService();
 
-        protected override void CreateServices()
+        protected override void CreateComponents()
         {
             RunServiceImpl = new RunService(RunWindowStrategy.WinForms);
             ServiceImpl = CreateMainService();
+
+            AddComponent(RunService);
+            AddComponent(Service);
         }
 
-        protected override InitializableExpressions GetInitializableExpressions
-            => new InitializableExpressions
-            {
-                () => RunServiceImpl,
-                () => ServiceImpl,
-            };
-
-        protected override IEnumerable<ITracable> Tracables => new List<ITracable>
-        {
-            RunServiceImpl,
-            ServiceImpl,
-        };
-
-        public IKey GetTestKey(string name) => Service.GetKeys().Where(k => k.Name == name).FirstOrDefault();
+        public IKey GetKey(string name) => Service.GetKeys().Where(k => k.Name == name).FirstOrDefault();
 
         [TestMethod]
         public void RegisterShortcutTest()
@@ -63,7 +52,7 @@ namespace Fenester.Lib.Win.Test
                 return IntPtr.Zero;
             });
             int count = 0;
-            var shortcut = Service.GetShortcut(GetTestKey("N"), KeyModifier.Alt);
+            var shortcut = Service.GetShortcut(GetKey("N"), KeyModifier.Alt);
             var operation = new Operation("Test", () =>
             {
                 this.LogLine(string.Format("  Shortcut called"));
@@ -85,8 +74,8 @@ namespace Fenester.Lib.Win.Test
         {
             TraceFile.SetName(string.Format("{0}-RegisterShortcutTestNoTimeout", GetType().Name));
             int count = 0;
-            var shortcutN = Service.GetShortcut(GetTestKey("N"), KeyModifier.Alt);
-            var shortcutS = Service.GetShortcut(GetTestKey("S"), KeyModifier.Alt);
+            var shortcutN = Service.GetShortcut(GetKey("N"), KeyModifier.Alt);
+            var shortcutS = Service.GetShortcut(GetKey("S"), KeyModifier.Alt);
             var operation = new Operation("Test", () =>
             {
                 this.LogLine(string.Format("  Shortcut called"));

@@ -5,6 +5,7 @@ namespace Fenester.Test.Mock.Service
 {
     public class RunServiceMock : IRunService
     {
+        public Action<string> OnLogLine { get; set; }
         public void Init()
         {
         }

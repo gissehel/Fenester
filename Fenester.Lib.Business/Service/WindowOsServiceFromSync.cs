@@ -1,6 +1,7 @@
 ﻿using Fenester.Lib.Core.Domain.Graphical;
 using Fenester.Lib.Core.Domain.Os;
 using Fenester.Lib.Core.Service;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,6 +9,8 @@ namespace Fenester.Lib.Business.Service
 {
     public class WindowOsServiceFromSync : IWindowOsService
     {
+        public Action<string> OnLogLine { get; set; }
+
         private IWindowOsServiceSync WindowOsServiceSync { get; }
 
         public WindowOsServiceFromSync(IWindowOsServiceSync windowOsServiceSync)

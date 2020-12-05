@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.852
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fenester.Lib.Graphical", "Fenester.Lib.Graphical\Fenester.Lib.Graphical.csproj", "{EC15D6E9-524E-4CEF-9175-8A2FA0B5108D}"
 EndProject
@@ -21,7 +21,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fenester.Lib.Graphical.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fenester.Exe.Test", "Fenester.Exe.Test\Fenester.Exe.Test.csproj", "{A3933001-65A1-4E6D-B9E6-90E751524C32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fenester.Test.Mock", "Fenester.Test.Mock\Fenester.Test.Mock.csproj", "{FFE3C49C-F5E9-45F8-B95A-E74D536F8B40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fenester.Test.Mock", "Fenester.Test.Mock\Fenester.Test.Mock.csproj", "{FFE3C49C-F5E9-45F8-B95A-E74D536F8B40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fenester.Exe.InteractiveTest", "Fenester.Exe.InteractiveTest\Fenester.Exe.InteractiveTest.csproj", "{30FEA336-D3CB-497F-92FA-B900AF550FDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{FFE3C49C-F5E9-45F8-B95A-E74D536F8B40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFE3C49C-F5E9-45F8-B95A-E74D536F8B40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFE3C49C-F5E9-45F8-B95A-E74D536F8B40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30FEA336-D3CB-497F-92FA-B900AF550FDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30FEA336-D3CB-497F-92FA-B900AF550FDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30FEA336-D3CB-497F-92FA-B900AF550FDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30FEA336-D3CB-497F-92FA-B900AF550FDC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,7 +10,11 @@ namespace Fenester.Lib.Graphical.Test
     [TestClass]
     public class RectangleServiceTest : DebuggableTest<RectangleService, IRectangleService>
     {
-        protected override void CreateServices() => ServiceImpl = new RectangleService();
+        protected override void CreateComponents()
+        {
+            ServiceImpl = new RectangleService();
+            AddComponent(Service);
+        }
 
         public void IntersectTest(IRectangle rectangle1, IRectangle rectangle2, IRectangle rectangleExpected)
         {

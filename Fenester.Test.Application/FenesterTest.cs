@@ -1,5 +1,6 @@
 ﻿using Fenester.Lib.Business.Service;
 using Fenester.Lib.Core.Domain.Graphical;
+using Fenester.Lib.Core.Domain.Utils;
 using Fenester.Lib.Core.Service;
 using Fenester.Lib.Test.Tools.Win;
 using Fenester.Test.Mock.Domain.Os;
@@ -40,7 +41,7 @@ namespace Fenester.Test.Application
         public RunServiceMock RunServiceImpl { get; set; }
         public IRunService RunService => RunServiceImpl;
 
-        protected override void CreateServices()
+        protected override void CreateComponents()
         {
             ScreenRepositoryImpl = new ScreenRepository();
             DesktopRepositoryImpl = new DesktopRepository();
@@ -49,19 +50,15 @@ namespace Fenester.Test.Application
             WindowOsServiceImpl = new WindowOsServiceMock();
             KeyServiceImpl = new KeyServiceMock();
             FenesterServiceImpl = new FenesterService(ScreenRepository, DesktopRepository, WindowRepository, ScreenOsService, WindowOsService, KeyService, RunService);
-        }
 
-        protected override InitializableExpressions GetInitializableExpressions => new InitializableExpressions()
-        {
-            ()=>ScreenRepositoryImpl,
-            ()=>DesktopRepositoryImpl,
-            ()=>WindowRepositoryImpl,
-            ()=>ScreenOsServiceImpl,
-            ()=>WindowOsServiceImpl,
-            ()=>KeyServiceImpl,
-            ()=>RunServiceImpl,
-            ()=>FenesterServiceImpl,
-        };
+            AddComponent(ScreenRepositoryImpl);
+            AddComponent(DesktopRepositoryImpl);
+            AddComponent(WindowRepositoryImpl);
+            AddComponent(ScreenOsServiceImpl);
+            AddComponent(WindowOsServiceImpl);
+            AddComponent(KeyServiceImpl);
+            AddComponent(FenesterServiceImpl);
+        }
 
         [TestMethod]
         public void SimpleTest()

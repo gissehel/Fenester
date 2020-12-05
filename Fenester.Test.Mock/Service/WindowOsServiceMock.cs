@@ -10,6 +10,7 @@ namespace Fenester.Test.Mock.Service
 {
     public class WindowOsServiceMock : IWindowOsServiceSync, IWindowOsServiceSyncMock
     {
+        public Action<string> OnLogLine { get; set; }
         public Func<IWindow, IWindow> OnFocusWindowSync { get; set; }
 
         public Func<IEnumerable<IInternalWindow>> OnGetWindowsSync { get; set; }

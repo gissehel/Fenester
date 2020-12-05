@@ -2,7 +2,7 @@
 
 namespace Fenester.Lib.Core.Service
 {
-    public interface IRectangleService
+    public interface IRectangleService : IComponent
     {
         IRectangle Intersect(IRectangle rectangle1, IRectangle rectangle2);
     }

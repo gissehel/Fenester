@@ -8,6 +8,7 @@ namespace Fenester.Test.Mock.Service
 {
     public class ScreenOsServiceMock : IScreenOsService, IScreenOsServiceMock
     {
+        public Action<string> OnLogLine { get; set; }
         public Action OnInit { get; set; }
         public Action OnUninit { get; set; }
 
