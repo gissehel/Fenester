@@ -262,6 +262,21 @@ namespace Fenester.Lib.Win.Service.Helpers
 
         #endregion RawInput
 
+        #region Input
+
+        /// <summary>
+        /// Synthesizes keystrokes, mouse motions, and button clicks.
+        /// </summary>
+        [DllImport("user32.dll")]
+        internal static extern uint SendInput
+            (
+                uint nInputs, 
+                [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs,
+                int cbSize
+            );
+
+        #endregion
+
         #region Errors
 
         public static Error GetLastError() => (Error)Marshal.GetLastWin32Error();

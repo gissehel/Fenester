@@ -2,6 +2,8 @@
 using Fenester.Lib.Core.Enums;
 using Fenester.Lib.Core.Service;
 using Fenester.Lib.Win.Domain.Os;
+using Fenester.Lib.Win.Service.Helpers.Enums;
+using Fenester.Lib.Win.Service.Helpers.Structs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -311,6 +313,63 @@ namespace Fenester.Lib.Win.Service.Helpers
                 Win32.BringWindowToTop(handle);
                 Win32.ShowWindow(handle, SW.SHOW);
             }
+
+            return true;
+        }
+
+        public static INPUT CreateKeyboardInput(ScanCode scanCode, VirtualKeys virtualKey, KEYEVENTF keyEvent) => new INPUT()
+        {
+            type = INPUT_TYPE.KEYBOARD,
+            U = new InputUnion
+            {
+                ki = new KEYBDINPUT()
+                {
+                    time = 0,
+                    wScan = scanCode,
+                    wVk = virtualKey,
+                    dwFlags = keyEvent,
+                }
+            }
+        };
+
+        public static void SendInput(ScanCode scanCode, VirtualKeys virtualKey, KEYEVENTF keyEvent)
+        {
+            var inputs = new[]
+            {
+                CreateKeyboardInput(scanCode, virtualKey, keyEvent),
+            };
+            Win32.SendInput(1, inputs, INPUT.Size);
+        }
+
+        public static bool FocusWindow2(IntPtr handle)
+        {
+            var style = Win32.GetWindowLong(handle, GWL.STYLE).ToWS();
+
+            // Minimize and restore to be able to make it active.
+            if ((style & WS.MINIMIZE) == WS.MINIMIZE)
+            {
+                Win32.ShowWindow(handle, SW.RESTORE);
+            }
+
+            //uint currentlyFocusedWindowProcessId = Win32.GetWindowThreadProcessId(Win32.GetForegroundWindow(), IntPtr.Zero);
+            //uint appThread = Win32.GetCurrentThreadId();
+
+            //if (currentlyFocusedWindowProcessId != appThread)
+            //{
+            //    Win32.AttachThreadInput(currentlyFocusedWindowProcessId, appThread, true);
+            //    Win32.BringWindowToTop(handle);
+            //    Win32.ShowWindow(handle, SW.SHOW);
+            //    Win32.AttachThreadInput(currentlyFocusedWindowProcessId, appThread, false);
+            //}
+            //else
+            //{
+            //    Win32.BringWindowToTop(handle);
+            //    Win32.ShowWindow(handle, SW.SHOW);
+            //}
+
+            SendInput(ScanCode.MENU, VirtualKeys.Menu, KEYEVENTF.NONE);
+            Win32.SetForegroundWindow(handle);
+            SendInput(ScanCode.MENU, VirtualKeys.Menu, KEYEVENTF.KEYUP);
 
             return true;
         }

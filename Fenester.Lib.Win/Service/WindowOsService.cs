@@ -155,7 +155,7 @@ namespace Fenester.Lib.Win.Service
             if (iWindow is Window window)
             {
                 EnsureWindowInitialStyles(window);
-                Win32Window.FocusWindow(window.Handle);
+                Win32Window.FocusWindow2(window.Handle);
                 if (Win32Window.GetWindowProps(window))
                 {
                     return window;
