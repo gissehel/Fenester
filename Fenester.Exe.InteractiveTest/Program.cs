@@ -14,6 +14,7 @@ namespace Fenester.Exe.InteractiveTest
             try
             {
                 application.Init();
+                application.Run();
             }
             finally
             {

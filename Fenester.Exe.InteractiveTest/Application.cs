@@ -1,8 +1,10 @@
 ﻿using Fenester.Lib.Business.Domain.Fenester;
 using Fenester.Lib.Core.Domain.Key;
+using Fenester.Lib.Core.Domain.Os;
 using Fenester.Lib.Core.Domain.Utils;
 using Fenester.Lib.Core.Enums;
 using Fenester.Lib.Core.Service;
+using Fenester.Lib.Graphical.Domain.Graphical;
 using Fenester.Lib.Test.Tools.Win;
 using Fenester.Lib.Win.Enums;
 using Fenester.Lib.Win.Service;
@@ -65,6 +67,13 @@ namespace Fenester.Exe.InteractiveTest
             KeyService.Use.RegisterShortcut(KeyService.Use.GetShortcut(GetKey(keyName), keyModifier), new Operation(name, action));
         }
 
+        private async Task<IWindow> GetWindow()
+        {
+            var windows = await WindowOsService.Use.GetWindows();
+            var window = windows.Where(w => w?.Title != null).Where(w => w.Title.Contains("Films")).FirstOrDefault();
+            return window;
+        }
+
         protected override void InitServicesPost()
         {
             base.InitServicesPost();
@@ -97,8 +106,7 @@ namespace Fenester.Exe.InteractiveTest
             };
             Action focusWindowAction = async () =>
             {
-                var windows = await WindowOsService.Use.GetWindows();
-                var window = windows.Where(w => w?.Title != null).Where(w => w.Title.Contains("Films")).FirstOrDefault();
+                var window = await GetWindow();
                 if (window != null)
                 {
                     this.LogLine("Focusing {0} ({1})", window.Title, window.Rectangle.Canonical);
@@ -109,17 +117,33 @@ namespace Fenester.Exe.InteractiveTest
                     this.LogLine("No window to focus");
                 }
             };
-
+            Action<int, int, int, int> moveWindowAction = async (int width, int height, int left, int top) =>
+            {
+                var window = await GetWindow();
+                if (window != null)
+                {
+                    this.LogLine("Move+Resize {0} ({1})", window.Title, window.Rectangle.Canonical);
+                    await WindowOsService.Use.Move(window, new Rectangle(width, height, left, top));
+                }
+                else
+                {
+                    this.LogLine("No window to move");
+                }
+            };
             this.LogLine("Start main call");
             RegisterAction("S", KeyModifier.Alt, "Quit", () => RunService.Use.Stop());
             RegisterAction("N", KeyModifier.Alt, "Test", testAction);
             RegisterAction("E", KeyModifier.Alt, "EnumerateWindows", () => enumerateWindowsOperationAsync());
             RegisterAction("D", KeyModifier.Alt, "Desktop", desktopAction);
             RegisterAction("F", KeyModifier.Alt, "Focus Window", focusWindowAction);
+            RegisterAction("M", KeyModifier.Alt, "Move Window", () => moveWindowAction(500, 800, 50, 50));
+            RegisterAction("P", KeyModifier.Alt, "Move Window 2", () => moveWindowAction(800, 500, 300, 500));
             this.LogLine("Stop main call");
-
-            RunService.Use.Run();
         }
 
+        public void Run()
+        {
+            RunService.Use.Run();
+        }
     }
 }
