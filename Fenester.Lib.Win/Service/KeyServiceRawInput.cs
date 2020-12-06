@@ -86,6 +86,8 @@ namespace Fenester.Lib.Win.Service
 
         private HashSet<VirtualKeys> KeyPressed { get; } = new HashSet<VirtualKeys>();
 
+        private HashSet<VirtualKeys> KeyUsed { get; } = new HashSet<VirtualKeys>();
+
         private bool KeyPressedMatchShortcut(Shortcut<VirtualKeys> shortcut)
         {
             if (KeyPressed.Contains(shortcut.Key.Value))
@@ -140,59 +142,71 @@ namespace Fenester.Lib.Win.Service
             return false;
         }
 
-        private void AddKey(VirtualKeys virtualKey)
+        private bool AddKey(VirtualKeys virtualKey)
         {
             KeyPressed.Add(virtualKey);
+            bool result = false;
             this.LogLine("        => Keyboard state : {0}", string.Join(",", KeyPressed.Select(x => x.ToEnumName())));
             foreach (var registeredShortcut in RegisteredShortcuts.Values)
             {
                 if (KeyPressedMatchShortcut(registeredShortcut.Shortcut))
-                {   
+                {
+                    KeyUsed.Add(virtualKey);
+                    result = true;
                     ExecuteRegisteredShortcut(registeredShortcut);
                 }
             }
+            return result;
         }
 
-        private void RemoveKey(VirtualKeys virtualKey)
+        private bool RemoveKey(VirtualKeys virtualKey)
         {
+            bool result = false;
             if (!KeyPressed.Contains(virtualKey))
             {
                 AddKey(virtualKey);
             }
             KeyPressed.Remove(virtualKey);
+            if (KeyUsed.Contains(virtualKey))
+            {
+                KeyUsed.Remove(virtualKey);
+                result = true;
+            }
+            return result;
         }
 
         public IntPtr OnMessage(Message message)
         {
-            this.LogLine("    => Local message : {0} - {1} - {2} - {3}", message.handle.ToRepr(), message.message.ToRepr(), message.wParam.ToString(), message.lParam.ToString());
+            bool handled = false;
+            // this.LogLine("    => Local message : {0} - {1} - {2} - {3}", message.handle.ToRepr(), message.message.ToRepr(), message.wParam.ToString(), message.lParam.ToString());
             if (message.message == WM.INPUT)
             {
                 int size = Marshal.SizeOf(typeof(RawInput));
                 var sizeRead = Win32.GetRawInputData(message.lParam, RawInputCommand.Input, out RawInput rawInput, ref size, Marshal.SizeOf(typeof(RawInputHeader)));
-                this.LogLine("        => sizeRead : {0}", sizeRead);
+                // this.LogLine("        => sizeRead : {0}", sizeRead);
                 if (sizeRead > 0)
                 {
-                    this.LogLine("        => rawInput.Header.Type : {0}", rawInput.Header.Type.ToRepr());
+                    // this.LogLine("        => rawInput.Header.Type : {0}", rawInput.Header.Type.ToRepr());
                     if (rawInput.Header.Type == RawInputType.Keyboard)
                     {
-                        this.LogLine("        => rawInput.Keyboard.MakeCode : {0}", rawInput.Keyboard.MakeCode);
-                        this.LogLine("        => rawInput.Keyboard.Flags : {0}", rawInput.Keyboard.Flags.ToRepr());
-                        this.LogLine("        => rawInput.Keyboard.Reserved : {0}", rawInput.Keyboard.Reserved);
-                        this.LogLine("        => rawInput.Keyboard.ExtraInformation : {0}", rawInput.Keyboard.ExtraInformation);
-                        this.LogLine("        => rawInput.Keyboard.Message : {0}", rawInput.Keyboard.Message.ToRepr());
-                        this.LogLine("        => rawInput.Keyboard.VirtualKey : {0}", rawInput.Keyboard.VirtualKey.ToRepr());
+                        // this.LogLine("        => rawInput.Keyboard.MakeCode : {0}", rawInput.Keyboard.MakeCode);
+                        // this.LogLine("        => rawInput.Keyboard.Flags : {0}", rawInput.Keyboard.Flags.ToRepr());
+                        // this.LogLine("        => rawInput.Keyboard.Reserved : {0}", rawInput.Keyboard.Reserved);
+                        // this.LogLine("        => rawInput.Keyboard.ExtraInformation : {0}", rawInput.Keyboard.ExtraInformation);
+                        // this.LogLine("        => rawInput.Keyboard.Message : {0}", rawInput.Keyboard.Message.ToRepr());
+                        // this.LogLine("        => rawInput.Keyboard.VirtualKey : {0}", rawInput.Keyboard.VirtualKey.ToRepr());
                         if (rawInput.Keyboard.Message == WM.KEYDOWN || rawInput.Keyboard.Message == WM.SYSKEYDOWN)
                         {
-                            AddKey(rawInput.Keyboard.VirtualKey);
+                            handled = handled || AddKey(rawInput.Keyboard.VirtualKey);
                         }
                         if (rawInput.Keyboard.Message == WM.KEYUP || rawInput.Keyboard.Message == WM.SYSKEYUP)
                         {
-                            RemoveKey(rawInput.Keyboard.VirtualKey);
+                            handled = handled || RemoveKey(rawInput.Keyboard.VirtualKey);
                         }
                     }
                 }
             }
-            return IntPtr.Zero;
+            return handled ? (IntPtr)(1) : IntPtr.Zero;
         }
     }
 }
