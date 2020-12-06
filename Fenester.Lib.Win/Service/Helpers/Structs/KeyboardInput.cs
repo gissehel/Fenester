@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 namespace Fenester.Lib.Win.Service.Helpers.Structs
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct KEYBDINPUT
+    public struct KeyboardInput
     {
         public VirtualKeys wVk;
         public ScanCode wScan;
-        public KEYEVENTF dwFlags;
+        public KeyEventFlag dwFlags;
         public int time;
         public UIntPtr dwExtraInfo;
     }

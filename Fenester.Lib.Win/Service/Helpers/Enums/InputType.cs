@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Fenester.Lib.Win.Service.Helpers.Enums
 {
-    public enum INPUT_TYPE : uint
+    public enum InputType : uint
     {
         MOUSE = 0,
         KEYBOARD = 1,

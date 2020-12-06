@@ -317,12 +317,12 @@ namespace Fenester.Lib.Win.Service.Helpers
             return true;
         }
 
-        public static INPUT CreateKeyboardInput(ScanCode scanCode, VirtualKeys virtualKey, KEYEVENTF keyEvent) => new INPUT()
+        public static Input CreateKeyboardInput(ScanCode scanCode, VirtualKeys virtualKey, KeyEventFlag keyEvent) => new Input()
         {
-            type = INPUT_TYPE.KEYBOARD,
+            type = InputType.KEYBOARD,
             U = new InputUnion
             {
-                ki = new KEYBDINPUT()
+                ki = new KeyboardInput()
                 {
                     time = 0,
                     wScan = scanCode,
@@ -332,13 +332,13 @@ namespace Fenester.Lib.Win.Service.Helpers
             }
         };
 
-        public static void SendInput(ScanCode scanCode, VirtualKeys virtualKey, KEYEVENTF keyEvent)
+        public static void SendInput(ScanCode scanCode, VirtualKeys virtualKey, KeyEventFlag keyEvent)
         {
             var inputs = new[]
             {
                 CreateKeyboardInput(scanCode, virtualKey, keyEvent),
             };
-            Win32.SendInput(1, inputs, INPUT.Size);
+            Win32.SendInput(1, inputs, Input.Size);
         }
 
         public static bool FocusWindow2(IntPtr handle)
@@ -367,9 +367,9 @@ namespace Fenester.Lib.Win.Service.Helpers
             //    Win32.ShowWindow(handle, SW.SHOW);
             //}
 
-            SendInput(ScanCode.MENU, VirtualKeys.Menu, KEYEVENTF.NONE);
+            SendInput(ScanCode.MENU, VirtualKeys.Menu, KeyEventFlag.None);
             Win32.SetForegroundWindow(handle);
-            SendInput(ScanCode.MENU, VirtualKeys.Menu, KEYEVENTF.KEYUP);
+            SendInput(ScanCode.MENU, VirtualKeys.Menu, KeyEventFlag.KeyUp);
 
             return true;
         }

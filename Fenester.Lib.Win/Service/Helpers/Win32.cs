@@ -271,7 +271,7 @@ namespace Fenester.Lib.Win.Service.Helpers
         internal static extern uint SendInput
             (
                 uint nInputs, 
-                [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs,
+                [MarshalAs(UnmanagedType.LPArray), In] Input[] pInputs,
                 int cbSize
             );
 

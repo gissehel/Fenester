@@ -6,10 +6,10 @@ namespace Fenester.Lib.Win.Service.Helpers.Structs
     public struct InputUnion
     {
         [FieldOffset(0)]
-        public MOUSEINPUT mi;
+        public MouseInput mi;
         [FieldOffset(0)]
-        public KEYBDINPUT ki;
+        public KeyboardInput ki;
         [FieldOffset(0)]
-        public HARDWAREINPUT hi;
+        public HardwareInput hi;
     }
 }

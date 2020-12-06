@@ -4,13 +4,13 @@ using System.Runtime.InteropServices;
 namespace Fenester.Lib.Win.Service.Helpers.Structs
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct INPUT
+    public struct Input
     {
-        internal INPUT_TYPE type;
+        internal InputType type;
         internal InputUnion U;
         internal static int Size
         {
-            get { return Marshal.SizeOf(typeof(INPUT)); }
+            get { return Marshal.SizeOf(typeof(Input)); }
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace Fenester.Lib.Win.Service.Helpers.Structs
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct MOUSEINPUT
+    public struct MouseInput
     {
         public int dx;
         public int dy;

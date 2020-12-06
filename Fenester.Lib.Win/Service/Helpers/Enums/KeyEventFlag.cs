@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace Fenester.Lib.Win.Service.Helpers.Enums
 {
     [Flags]
-    public enum KEYEVENTF : uint
+    public enum KeyEventFlag : uint
     {
-        NONE = 0x0000,
-        EXTENDEDKEY = 0x0001,
-        KEYUP = 0x0002,
-        SCANCODE = 0x0008,
-        UNICODE = 0x0004
+        None = 0x0000,
+        ExtendedKey = 0x0001,
+        KeyUp = 0x0002,
+        ScanCode = 0x0008,
+        Unicode = 0x0004
     }
 }
