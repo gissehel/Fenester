@@ -1,0 +1,32 @@
+name: buildUpload
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  publish:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup MSBuild Path
+        uses: warrenbuckley/Setup-MSBuild@v1
+       
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.0.2
+     
+      - name: Restore NuGet Packages
+        run: nuget restore Fenester.sln
+ 
+      - name: Build and Publish Web App
+        run: msbuild Fenester.sln /p:Configuration=Release
+ 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: Fenester.Exe.InteractiveTest
+          path: Fenester.Exe.InteractiveTest\bin\Release
+
