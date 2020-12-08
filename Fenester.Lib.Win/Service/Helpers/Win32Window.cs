@@ -70,6 +70,10 @@ namespace Fenester.Lib.Win.Service.Helpers
                             }
                             break;
                     }
+                    if (window.OsVisibility == Visibility.Normal && (window.Rectangle == null || window.Rectangle.Width() <= 0 || window.Rectangle.Height() <= 0))
+                    {
+                        window.OsVisibility = Visibility.None;
+                    }
                 }
                 return true;
             }
