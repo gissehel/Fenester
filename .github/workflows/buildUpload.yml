@@ -31,4 +31,3 @@ jobs:
         with:
           name: Fenester.Exe.InteractiveTest
           path: Fenester.Exe.InteractiveTest\bin\Release
-
