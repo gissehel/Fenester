@@ -70,7 +70,7 @@ namespace Fenester.Exe.InteractiveTest
         private async Task<IWindow> GetWindow()
         {
             var windows = await WindowOsService.Use.GetWindows();
-            var window = windows.Where(w => w?.Title != null).Where(w => w.Title.Contains("Films")).FirstOrDefault();
+            var window = windows.Where(w => w?.Title != null).Where(w => w.Title.Contains("Word Mobile")).FirstOrDefault();
             return window;
         }
 
@@ -94,15 +94,17 @@ namespace Fenester.Exe.InteractiveTest
             };
             Action enumerateWindowsOperationAsync = async () =>
             {
-                var windows = await WindowOsService.Use.GetWindows();
+                var windows = (await WindowOsService.Use.GetWindows()).Where(window => window.OsVisibility != Visibility.None);
+                this.LogLine("    **** Windows : Start");
                 foreach (var window in windows)
                 {
                     if (window.Rectangle != null)
                     {
-                        this.LogLine("    {0} ({1})", window.Title, window.Rectangle.Canonical);
-                    } 
-                    
+                        this.LogLine("      => {2} [{0}] ({1}) {3} [{4}]", window.Title, window.Rectangle.Canonical, window.OsVisibility, window.Category, window.Class);
+                    }
+
                 }
+                this.LogLine("    **** Windows : Stop");
             };
             Action focusWindowAction = async () =>
             {
