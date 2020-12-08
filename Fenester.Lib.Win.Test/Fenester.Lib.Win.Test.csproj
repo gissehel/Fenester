@@ -77,6 +77,10 @@
       <Project>{1a073dc6-cad8-4077-a780-394420ab1737}</Project>
       <Name>Fenester.Lib.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Fenester.Test.Tools.Lib\Fenester.Test.Tools.Lib.csproj">
+      <Project>{815f88b9-2d67-4dc3-8a4c-7ebae5581da3}</Project>
+      <Name>Fenester.Test.Tools.Lib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Fenester.Test.Tools.Win\Fenester.Test.Tools.Win.csproj">
       <Project>{6e32754b-2501-47a1-b0d3-01044a7194ea}</Project>
       <Name>Fenester.Test.Tools.Win</Name>

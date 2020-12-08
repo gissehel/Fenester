@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fenester.Test.Mock", "Fenes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fenester.Exe.InteractiveTest", "Fenester.Exe.InteractiveTest\Fenester.Exe.InteractiveTest.csproj", "{30FEA336-D3CB-497F-92FA-B900AF550FDC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fenester.Test.Tools.Lib", "Fenester.Test.Tools.Lib\Fenester.Test.Tools.Lib.csproj", "{815F88B9-2D67-4DC3-8A4C-7EBAE5581DA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{30FEA336-D3CB-497F-92FA-B900AF550FDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30FEA336-D3CB-497F-92FA-B900AF550FDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30FEA336-D3CB-497F-92FA-B900AF550FDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{815F88B9-2D67-4DC3-8A4C-7EBAE5581DA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{815F88B9-2D67-4DC3-8A4C-7EBAE5581DA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{815F88B9-2D67-4DC3-8A4C-7EBAE5581DA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{815F88B9-2D67-4DC3-8A4C-7EBAE5581DA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

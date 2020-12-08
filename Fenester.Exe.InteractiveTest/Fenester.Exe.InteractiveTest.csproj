@@ -67,9 +67,9 @@
       <Project>{ab455a7b-34e3-49b2-b945-f522d94fdebe}</Project>
       <Name>Fenester.Lib.Win</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Fenester.Test.Tools.Win\Fenester.Test.Tools.Win.csproj">
-      <Project>{6e32754b-2501-47a1-b0d3-01044a7194ea}</Project>
-      <Name>Fenester.Test.Tools.Win</Name>
+    <ProjectReference Include="..\Fenester.Test.Tools.Lib\Fenester.Test.Tools.Lib.csproj">
+      <Project>{815f88b9-2d67-4dc3-8a4c-7ebae5581da3}</Project>
+      <Name>Fenester.Test.Tools.Lib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
