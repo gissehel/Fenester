@@ -5,7 +5,7 @@ on:
     branches: [master]
 
 jobs:
-  publish:
+  buildUpload:
     runs-on: windows-latest
 
     steps:
@@ -14,18 +14,18 @@ jobs:
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
-       
+
       - name: Setup NuGet
         uses: nuget/setup-nuget@v1
         with:
-          nuget-version: '5.x'
-     
+          nuget-version: "5.x"
+
       - name: Restore NuGet Packages
         run: nuget restore Fenester.sln
- 
-      - name: Build and Publish Web App
+
+      - name: Build
         run: msbuild Fenester.sln /p:Configuration=Release
- 
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v1.0.0
         with:

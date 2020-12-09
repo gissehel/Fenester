@@ -1,0 +1,60 @@
+on:
+  push:
+    tags:
+      - "v*"
+
+name: Upload Release Asset
+
+jobs:
+  release:
+    name: Upload Release Asset
+
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install 7Zip PowerShell Module
+        shell: powershell
+        run: Install-Module 7Zip4PowerShell -Force -Verbose
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-version: "5.x"
+
+      - name: Restore NuGet Packages
+        run: nuget restore Fenester.sln
+
+      - name: Build
+        run: msbuild Fenester.sln /p:Configuration=Release
+
+      - name: Zip release folder
+        shell: powershell
+        run: Compress-7Zip "Fenester.Exe.InteractiveTest\bin\Release" -ArchiveFileName "Fenester.Exe.InteractiveTest.zip"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Fenester.Exe.InteractiveTest.zip
+          asset_name: Fenester.Exe.InteractiveTest.zip
+          asset_content_type: application/zip
