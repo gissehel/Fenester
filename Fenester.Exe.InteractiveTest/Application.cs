@@ -94,17 +94,23 @@ namespace Fenester.Exe.InteractiveTest
             };
             Action enumerateWindowsOperationAsync = async () =>
             {
-                var windows = (await WindowOsService.Use.GetWindows()).Where(window => window.OsVisibility != Visibility.None);
-                this.LogLine("    **** Windows : Start");
-                foreach (var window in windows)
+                using (var markdownTraceFile = TraceFile.Get("windows", "md").SetIncludeTimestamp(false))
                 {
-                    if (window.Rectangle != null)
+                    var windows = (await WindowOsService.Use.GetWindows()).Where(window => window.OsVisibility != Visibility.None);
+                    this.LogLine("    **** Windows : Start");
+                    markdownTraceFile.OutLine("| Title | Position | OS Visibility | Category | Class |");
+                    markdownTraceFile.OutLine("| --- | --- | --- | --- | --- |");
+                    foreach (var window in windows)
                     {
-                        this.LogLine("      => {2} [{0}] ({1}) {3} [{4}]", window.Title, window.Rectangle.Canonical, window.OsVisibility, window.Category, window.Class);
-                    }
+                        if (window.Rectangle != null && window.Rectangle.Size.Height != 0 && window.Rectangle.Size.Width != 0 && window.Title != null)
+                        {
+                            markdownTraceFile.OutLine("| {0} | {1} | {2} | {3} | {4} |", window?.Title?.Replace("\\","\\\\"), window.Rectangle.Canonical, window.OsVisibility, window.Category, window?.Class?.Replace("\\", "\\\\"));
+                            this.LogLine("      => {2} [{0}] ({1}) {3} [{4}]", window.Title, window.Rectangle.Canonical, window.OsVisibility, window.Category, window.Class);
+                        }
 
+                    }
+                    this.LogLine("    **** Windows : Stop");
                 }
-                this.LogLine("    **** Windows : Stop");
             };
             Action focusWindowAction = async () =>
             {

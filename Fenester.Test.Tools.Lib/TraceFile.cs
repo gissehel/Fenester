@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Fenester.Lib.Test.Tools.Win
 {
-    public class TraceFile
+    public class TraceFile : IDisposable
     {
         private TextWriter TextWriter { get; set; }
 
@@ -16,6 +16,29 @@ namespace Fenester.Lib.Test.Tools.Win
         public string Name { get; private set; }
 
         private string IdStamp { get; set; }
+
+        private bool IncludeTimestamp { get; set; }
+
+        private string _extension = null;
+
+        private string Extension
+        {
+            get
+            {
+                if (_extension == null)
+                {
+                    return "log";
+                }
+                else
+                {
+                    return _extension;
+                }
+            }
+            set
+            {
+                _extension = value;
+            }
+        }
 
         private TextWriter Writer
         {
@@ -31,6 +54,11 @@ namespace Fenester.Lib.Test.Tools.Win
             return new TraceFile().SetName(name);
         }
 
+        public static TraceFile Get(string name, string extension)
+        {
+            return new TraceFile().SetExtension(extension).SetName(name);
+        }
+
         private void EnsureOpen()
         {
             if (!Opened)
@@ -41,7 +69,7 @@ namespace Fenester.Lib.Test.Tools.Win
                     const string datePattern = "yyyyMMdd-HHmmss";
                     IdStamp = DateTime.Now.ToString(datePattern);
                 }
-                filename = string.Format("Out-{0}{1}{2}.log", IdStamp, Name != null ? "-" : "", Name);
+                filename = string.Format("Out-{0}{1}{2}.{3}", IdStamp, Name != null ? "-" : "", Name, Extension);
                 TextWriter = new StreamWriter(filename, true, Encoding.UTF8);
                 Opened = true;
             }
@@ -54,13 +82,29 @@ namespace Fenester.Lib.Test.Tools.Win
                 Close();
             }
             Name = name;
-            EnsureOpen();
             if (Buffer.Count > 0)
             {
+                EnsureOpen();
                 Buffer.ForEach((line) => Writer.WriteLine(line));
                 Buffer.Clear();
                 Writer.Flush();
             }
+            return this;
+        }
+
+        public TraceFile SetExtension(string extension)
+        {
+            if (Opened)
+            {
+                Close();
+            }
+            Extension = extension;
+            return this;
+        }
+
+        public TraceFile SetIncludeTimestamp(bool includeTimestamp)
+        {
+            IncludeTimestamp = includeTimestamp;
             return this;
         }
 
@@ -85,7 +129,14 @@ namespace Fenester.Lib.Test.Tools.Win
 
         public TraceFile OutLine(string line)
         {
-            AddLine(string.Format("{0} {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), line));
+            if (IncludeTimestamp)
+            {
+                AddLine(string.Format("{0} {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), line));
+            }
+            else
+            {
+                AddLine(line);
+            }
             return this;
         }
 
@@ -129,6 +180,11 @@ namespace Fenester.Lib.Test.Tools.Win
                 }
                 TextWriter = null;
             }
+        }
+
+        public void Dispose()
+        {
+            Close();
         }
 
         ~TraceFile()
