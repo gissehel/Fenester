@@ -1,11 +1,13 @@
-name: buildUpload
+name: Build
 
 on:
   push:
     branches: [master]
 
 jobs:
-  buildUpload:
+  build:
+    name: Build
+
     runs-on: windows-latest
 
     steps:
