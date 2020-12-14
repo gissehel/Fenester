@@ -1,4 +1,4 @@
-﻿using Fenester.Lib.Win.Service.Helpers;
+﻿using Orissev.Win32.Structs;
 using System;
 
 namespace Fenester.Lib.Win.Service

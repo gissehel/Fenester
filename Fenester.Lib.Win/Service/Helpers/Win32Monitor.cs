@@ -1,5 +1,7 @@
 ﻿using Fenester.Lib.Core.Service;
 using Fenester.Lib.Win.Domain.Os;
+using Orissev.Win32;
+using Orissev.Win32.Structs;
 using System;
 using System.Collections.Generic;
 

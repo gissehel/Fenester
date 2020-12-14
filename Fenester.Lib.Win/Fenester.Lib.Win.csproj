@@ -53,62 +53,15 @@
     <Compile Include="Enums\UserMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\ConvertHelper.cs" />
-    <Compile Include="Service\Helpers\Enums\Error.cs" />
-    <Compile Include="Service\Helpers\Enums\CS.cs" />
-    <Compile Include="Service\Helpers\delegates.cs" />
-    <Compile Include="Service\Helpers\Enums\HIDUsage.cs" />
-    <Compile Include="Service\Helpers\Enums\HIDUsagePage.cs" />
-    <Compile Include="Service\Helpers\Enums\InputType.cs" />
-    <Compile Include="Service\Helpers\Enums\KeyEventFlag.cs" />
-    <Compile Include="Service\Helpers\Enums\MOUSEEVENTF.cs" />
-    <Compile Include="Service\Helpers\Enums\RawInputCommand.cs" />
-    <Compile Include="Service\Helpers\Enums\RawInputType.cs" />
-    <Compile Include="Service\Helpers\Enums\RawKeyboardFlags.cs" />
-    <Compile Include="Service\Helpers\Enums\RIDEV.cs" />
-    <Compile Include="Service\Helpers\Enums\ScanCode.cs" />
-    <Compile Include="Service\Helpers\Enums\VirtualKeys.cs" />
-    <Compile Include="Service\Helpers\Enums\WH.cs" />
-    <Compile Include="Service\Helpers\Structs\DisplayInfo.cs" />
-    <Compile Include="Service\Helpers\Enums\GWL.cs" />
-    <Compile Include="Service\Helpers\Enums\KeyModifiers.cs" />
-    <Compile Include="Service\Helpers\Enums\Keys.cs" />
-    <Compile Include="Service\Helpers\Structs\HardwareInput.cs" />
-    <Compile Include="Service\Helpers\Structs\Input.cs" />
-    <Compile Include="Service\Helpers\Structs\InputUnion.cs" />
-    <Compile Include="Service\Helpers\Structs\KeyboardInput.cs" />
-    <Compile Include="Service\Helpers\Structs\MonitorInfo.cs" />
-    <Compile Include="Service\Helpers\Enums\MWMO.cs" />
-    <Compile Include="Service\Helpers\Enums\PM.cs" />
-    <Compile Include="Service\Helpers\Structs\MouseInput.cs" />
-    <Compile Include="Service\Helpers\Structs\Point.cs" />
-    <Compile Include="Service\Helpers\Enums\QS.cs" />
-    <Compile Include="Service\Helpers\Enums\RDW.cs" />
-    <Compile Include="Service\Helpers\Structs\RawInput.cs" />
-    <Compile Include="Service\Helpers\Structs\RawInputDevice.cs" />
-    <Compile Include="Service\Helpers\Structs\RawInputHeader.cs" />
-    <Compile Include="Service\Helpers\Structs\RawKeyboard.cs" />
-    <Compile Include="Service\Helpers\Structs\Rect.cs" />
-    <Compile Include="Service\Helpers\Enums\SC.cs" />
-    <Compile Include="Service\Helpers\Enums\SW.cs" />
-    <Compile Include="Service\Helpers\Enums\SWP.cs" />
-    <Compile Include="Service\Helpers\Enums\WAIT.cs" />
-    <Compile Include="Service\Helpers\Enums\WM.cs" />
-    <Compile Include="Service\Helpers\Structs\WindowClassEx.cs" />
-    <Compile Include="Service\Helpers\Enums\WPF.cs" />
-    <Compile Include="Service\Helpers\Enums\WS_EX.cs" />
-    <Compile Include="Service\Helpers\Win32.cs" />
-    <Compile Include="Service\Helpers\Structs\WindowPlacement.cs" />
-    <Compile Include="Service\Helpers\Enums\WS.cs" />
+    <Compile Include="Service\Helpers\Win32Monitor.cs" />
+    <Compile Include="Service\Helpers\Win32Window.cs" />
     <Compile Include="Service\IMessageProcessor.cs" />
     <Compile Include="Service\IRunServiceWin.cs" />
     <Compile Include="Service\KeyServiceHotKey.cs" />
-    <Compile Include="Service\Helpers\Structs\Message.cs" />
     <Compile Include="Service\KeyServiceBase.cs" />
     <Compile Include="Service\KeyServiceHook.cs" />
     <Compile Include="Service\KeyServiceRawInput.cs" />
     <Compile Include="Service\RunService.cs" />
-    <Compile Include="Service\Helpers\Win32Monitor.cs" />
-    <Compile Include="Service\Helpers\Win32Window.cs" />
     <Compile Include="Service\ScreenOsService.cs" />
     <Compile Include="Service\WindowOsService.cs" />
   </ItemGroup>
@@ -120,6 +73,10 @@
     <ProjectReference Include="..\Fenester.Lib.Graphical\Fenester.Lib.Graphical.csproj">
       <Project>{ec15d6e9-524e-4cef-9175-8a2fa0b5108d}</Project>
       <Name>Fenester.Lib.Graphical</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Orissev.Lib.Win32\Orissev.Win32.csproj">
+      <Project>{dca8f523-e80d-42ec-99fa-690a67e7a70e}</Project>
+      <Name>Orissev.Win32</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

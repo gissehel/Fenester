@@ -63,13 +63,12 @@ namespace Fenester.Lib.Test.Tools.Win
         {
             if (!Opened)
             {
-                string filename = null;
                 if (IdStamp == null)
                 {
                     const string datePattern = "yyyyMMdd-HHmmss";
                     IdStamp = DateTime.Now.ToString(datePattern);
                 }
-                filename = string.Format("Out-{0}{1}{2}.{3}", IdStamp, Name != null ? "-" : "", Name, Extension);
+                string filename = string.Format("Out-{0}{1}{2}.{3}", IdStamp, Name != null ? "-" : "", Name, Extension);
                 TextWriter = new StreamWriter(filename, true, Encoding.UTF8);
                 Opened = true;
             }

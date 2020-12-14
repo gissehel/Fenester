@@ -7,6 +7,8 @@ using Fenester.Lib.Win.Enums;
 using Fenester.Lib.Win.Service;
 using Fenester.Lib.Win.Service.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Orissev.Win32;
+using Orissev.Win32.Enums;
 using System;
 using System.Linq;
 

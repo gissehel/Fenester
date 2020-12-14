@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fenester.Exe.InteractiveTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fenester.Test.Tools.Lib", "Fenester.Test.Tools.Lib\Fenester.Test.Tools.Lib.csproj", "{815F88B9-2D67-4DC3-8A4C-7EBAE5581DA3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orissev.Win32", "Orissev.Lib.Win32\Orissev.Win32.csproj", "{DCA8F523-E80D-42EC-99FA-690A67E7A70E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{815F88B9-2D67-4DC3-8A4C-7EBAE5581DA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{815F88B9-2D67-4DC3-8A4C-7EBAE5581DA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{815F88B9-2D67-4DC3-8A4C-7EBAE5581DA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCA8F523-E80D-42EC-99FA-690A67E7A70E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCA8F523-E80D-42EC-99FA-690A67E7A70E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCA8F523-E80D-42EC-99FA-690A67E7A70E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCA8F523-E80D-42EC-99FA-690A67E7A70E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

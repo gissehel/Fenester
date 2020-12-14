@@ -1,7 +1,7 @@
 ﻿using Fenester.Lib.Core.Domain.Graphical;
 using Fenester.Lib.Core.Domain.Os;
 using Fenester.Lib.Core.Enums;
-using Fenester.Lib.Win.Service.Helpers;
+using Orissev.Win32.Enums;
 using System;
 
 namespace Fenester.Lib.Win.Domain.Os

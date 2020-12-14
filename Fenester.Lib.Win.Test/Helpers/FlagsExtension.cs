@@ -1,4 +1,4 @@
-﻿using Fenester.Lib.Win.Service.Helpers;
+﻿using Orissev.Win32.Enums;
 
 namespace Fenester.Lib.Win.Test
 {

@@ -1,5 +1,6 @@
 ﻿using Fenester.Lib.Core.Service;
-using Fenester.Lib.Win.Service.Helpers;
+using Orissev.Win32;
+using Orissev.Win32.Enums;
 using System;
 using System.Diagnostics;
 using System.Linq;

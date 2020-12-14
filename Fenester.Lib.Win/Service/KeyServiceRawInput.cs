@@ -1,9 +1,9 @@
 ﻿using Fenester.Lib.Core.Enums;
 using Fenester.Lib.Core.Service;
 using Fenester.Lib.Win.Domain.Key;
-using Fenester.Lib.Win.Service.Helpers;
-using Fenester.Lib.Win.Service.Helpers.Enums;
-using Fenester.Lib.Win.Service.Helpers.Structs;
+using Orissev.Win32;
+using Orissev.Win32.Enums;
+using Orissev.Win32.Structs;
 using System;
 using System.Collections.Generic;
 using System.Linq;

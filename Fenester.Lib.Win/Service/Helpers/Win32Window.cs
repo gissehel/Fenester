@@ -2,8 +2,9 @@
 using Fenester.Lib.Core.Enums;
 using Fenester.Lib.Core.Service;
 using Fenester.Lib.Win.Domain.Os;
-using Fenester.Lib.Win.Service.Helpers.Enums;
-using Fenester.Lib.Win.Service.Helpers.Structs;
+using Orissev.Win32;
+using Orissev.Win32.Enums;
+using Orissev.Win32.Structs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -135,7 +136,7 @@ namespace Fenester.Lib.Win.Service.Helpers
             AddWindow(windows, desktopWindow, shellWindow);
             AddWindow(windows, shellWindow, IntPtr.Zero);
 
-            Win32.EnumWindows((IntPtr handle, int lParam) =>
+            Win32.EnumWindows((handle, lParam) =>
             {
                 AddWindow(windows, handle, IntPtr.Zero);
                 return true;
@@ -148,7 +149,7 @@ namespace Fenester.Lib.Win.Service.Helpers
         {
             List<IntPtr> windows = new List<IntPtr>();
 
-            Win32.EnumWindows((IntPtr handle, int lParam) => { windows.Add(handle); return true; }, 0);
+            Win32.EnumWindows((handle, lParam) => { windows.Add(handle); return true; }, 0);
 
             return windows;
         }
@@ -393,7 +394,7 @@ namespace Fenester.Lib.Win.Service.Helpers
             {
                 return HandleWindow;
             }
-            WindowProc = new WindowProc((IntPtr handleWindow, WM wm, IntPtr wParam, IntPtr lParam) =>
+            WindowProc = new WindowProc((handleWindow, wm, wParam, lParam) =>
             {
                 IntPtr result = IntPtr.Zero;
                 if (processMessage != null)

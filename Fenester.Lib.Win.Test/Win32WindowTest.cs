@@ -2,9 +2,10 @@
 using Fenester.Lib.Core.Service;
 using Fenester.Lib.Test.Tools.Win;
 using Fenester.Lib.Win.Domain.Os;
-using Fenester.Lib.Win.Service;
 using Fenester.Lib.Win.Service.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Orissev.Win32;
+using Orissev.Win32.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

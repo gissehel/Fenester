@@ -93,6 +93,10 @@
       <Project>{EC15D6E9-524E-4CEF-9175-8A2FA0B5108D}</Project>
       <Name>Fenester.Lib.Graphical</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Orissev.Lib.Win32\Orissev.Win32.csproj">
+      <Project>{dca8f523-e80d-42ec-99fa-690a67e7a70e}</Project>
+      <Name>Orissev.Win32</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

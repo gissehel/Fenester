@@ -3,6 +3,7 @@ using Fenester.Lib.Core.Domain.Key;
 using Fenester.Lib.Core.Enums;
 using Fenester.Lib.Core.Service;
 using Fenester.Lib.Win.Domain.Key;
+using Orissev.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;

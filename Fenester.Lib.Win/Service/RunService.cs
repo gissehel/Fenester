@@ -1,11 +1,12 @@
 ﻿using Fenester.Lib.Core.Service;
 using Fenester.Lib.Win.Enums;
 using Fenester.Lib.Win.Service.Helpers;
+using Orissev.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Message = Fenester.Lib.Win.Service.Helpers.Message;
+using Message = Orissev.Win32.Structs.Message;
 
 namespace Fenester.Lib.Win.Service
 {
